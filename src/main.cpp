@@ -1,29 +1,10 @@
 #include "System.hpp"
-#include "SceneBase.hpp"
 #include "Core/Error.hpp"
-#include "SceneTest2.hpp"
 
 #include <iostream>
 
 #include "Test1.hpp"
 #include "Montagne.hpp"
-
-
-void test2(){    
-    SceneTest2 scene;
-            
-    while(System::isRunning()){
-        System::doEvent();
-        System::clear();
-        
-        scene.update();
-        scene.render();
-        
-        System::endFrame();
-    }
-    
-    std::cout<<"test2"<<std::endl;
-}
 
 int main(int argc, char** argv){
     try{
@@ -38,8 +19,6 @@ int main(int argc, char** argv){
         
         if(testName=="Test1"){
             test1();
-        }else if(testName=="Test2"){
-            test2();
         }else if(testName=="Montagne"){
             montagne();
         }else{
