@@ -26,4 +26,5 @@ namespace Scene
 {
     SceneBase* createScene(std::string name);
     void destroyScene(SceneBase* scene);
+
 }

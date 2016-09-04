@@ -3,14 +3,12 @@
 #include <cstring>
 #include <string>
 
-#include <Math/Vec2.hpp>
-#include <Math/Vec3.hpp>
-#include <Math/Vec4.hpp>
+#include "Vector4.hpp"
 
 namespace math
 {
 	template <class T>
-	class Matrix4 : Object
+	class Matrix4
 	{
 	  public:
 		Matrix4<T>()
@@ -519,5 +517,5 @@ namespace math
 	typedef Matrix4<float>  Matrix4f;
 	typedef Matrix4<double> Matrix4d;
 }
-#endif
+
 

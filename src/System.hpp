@@ -277,6 +277,7 @@ namespace System
     
     void addKeydownListener(std::function<void(Key)>);
     void addKeyupListener(std::function<void(Key)>);
+    bool keyIsPressed(Key k);
     
     void close();
 }

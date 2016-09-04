@@ -96,6 +96,11 @@ namespace System
     void addKeyupListener(std::function<void(Key)> l){
         mKeyup.addListener(l);
     }
+    
+    bool keyIsPressed(Key k){
+        const Uint8 *state = SDL_GetKeyboardState(NULL);
+        return state[SDL_GetScancodeFromKey((SDL_Keycode)k)];
+    }
 
     void close(){
         mOpen=false;
