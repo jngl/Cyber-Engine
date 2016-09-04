@@ -4,7 +4,6 @@
 #include <iostream>
 
 #include "Test1.hpp"
-#include "Montagne.hpp"
 
 int main(int argc, char** argv){
     try{
@@ -19,8 +18,6 @@ int main(int argc, char** argv){
         
         if(testName=="Test1"){
             test1();
-        }else if(testName=="Montagne"){
-            montagne();
         }else{
             std::cerr<<"Test not exist"<<std::endl;
         }
