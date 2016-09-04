@@ -2,48 +2,21 @@
 
 #include <iostream>
 
+#include <GL/glew.h>
+
 #include "System.hpp"
 
 #include "Renderer/Renderer.hpp"
 #include "Renderer/MeshData.hpp"
+#include "Renderer/BasicCamera.hpp"
+#include "Renderer/GLDebug.hpp"
 
 #include "Math/Angle3.hpp"
-
-struct Camera
-{
-    float dist;
-    math::Angle3f angle;
-};
-
-void setView2(Camera& camera){
-    math::Matrix4f view;
-    math::Vec3f dir = camera.angle.toDirection();
-    math::Vec3f pos = dir*camera.dist;
-    math::Vec3f up(0.f, 1.f, 0.f);
-    math::Vec3f zero(0.f, 0.f, 0.f);
-    
-    if(System::keyIsPressed(System::Key::KEY_z)){
-        camera.dist -= 0.001;
-    }else if(System::keyIsPressed(System::Key::KEY_s)){
-        camera.dist += 0.001f;
-    }else if(System::keyIsPressed(System::Key::KEY_RIGHT)){
-        camera.angle.yaw.rotateRadian(0.0001f);
-    }else if(System::keyIsPressed(System::Key::KEY_LEFT)){
-        camera.angle.yaw.rotateRadian(-0.0001f);
-    }else if(System::keyIsPressed(System::Key::KEY_UP)){
-        camera.angle.pitch.rotateRadian(0.0001f);
-    }else if(System::keyIsPressed(System::Key::KEY_DOWN)){
-        camera.angle.pitch.rotateRadian(-0.0001f);
-    }
-    
-    view.lookAt(pos, zero, up);
-    Renderer::setViewMatrix(view);
-}
 
 void test1(){
     Renderer::createRenderer();
     
-    Camera cam;
+    BasicCamera cam;
     cam.dist=5.f;
     
     MeshData data;
@@ -55,6 +28,16 @@ void test1(){
                data.elements.size(),
                data.elements.data());
     
+    
+    Renderer::ShaderId shader;
+    Renderer::createShader(shader,
+                 "../data/shaders/basic.vert",
+                 "../data/shaders/basic.frag");
+    glCheck(glUseProgram(shader));
+    GLuint GBuffersMdvMatLoc = glGetUniformLocation(shader,"MVP");
+    GLuint GBuffersVertexLoc = glGetAttribLocation(shader,"position");
+    glCheckError(__FILE__, __LINE__);
+    
     math::Matrix4f model;
     
     math::Matrix4f proj;
@@ -65,9 +48,34 @@ void test1(){
         System::doEvent();
         System::clear();
      
-        setView2(cam);
+        updateBasicCamera(cam);
         
-        Renderer::drawMesh(&mesh, model);
+        math::Matrix4f MVP = proj * Renderer::currentViewMatrix * model;
+        
+        glCheck(glUseProgram(shader));
+        glCheck(glUniformMatrix4fv(GBuffersMdvMatLoc,1,GL_FALSE,&MVP[0]));
+        
+        
+        //Renderer::drawMesh(&mesh, model);
+        
+        
+        glCheck(glBindBuffer(GL_ARRAY_BUFFER,mesh.id[0]));
+        glCheck(glEnableVertexAttribArray(GBuffersVertexLoc));
+        glCheck(glVertexAttribPointer(0,
+                              3,
+                              GL_FLOAT,
+                              GL_FALSE,
+                              0,
+                              (void *)0));
+
+        glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,mesh.id[1]));
+        glCheck(glDrawElements(GL_TRIANGLES,
+                       mesh.nbFaces,
+                       GL_UNSIGNED_INT,
+                       (void *)0));
+
+        glCheck(glBindFramebuffer(GL_FRAMEBUFFER,0));
+        
         
         System::endFrame();
     }

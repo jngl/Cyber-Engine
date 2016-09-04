@@ -13,6 +13,7 @@ namespace Renderer
     
     //view
     void setViewMatrix(math::Matrix4f m);
+    extern math::Matrix4f currentViewMatrix;
     
     //projection
     void setProjectionMatrix(math::Matrix4f m);

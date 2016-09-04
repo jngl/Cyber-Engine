@@ -1,18 +1,21 @@
 #include "Renderer.hpp"
 
+#include "GLDebug.hpp"
+
 #include <fstream>
 #include <vector>
 
-math::Matrix4f currentViewMatrix;
-math::Matrix4f currentProjectionMatrix;
-
 namespace Renderer
 {    
+    math::Matrix4f currentViewMatrix;
+    
+    math::Matrix4f currentProjectionMatrix;
+    
     //render
     void createRenderer(){
-        glEnable(GL_DEPTH_TEST);
+        glCheck(glEnable(GL_DEPTH_TEST));
         
-        glViewport(0,0,800,600);
+        glCheck(glViewport(0,0,800,600));
     }
     
     void destroyRenderer(){
@@ -36,54 +39,54 @@ namespace Renderer
                      unsigned int* faces
                     )
     {
-        glGenBuffers(2, mesh->id);
+        glCheck(glGenBuffers(2, mesh->id));
         
         mesh->nbFaces = nbFaces;
         
         // vertices
-        glBindBuffer(GL_ARRAY_BUFFER,
-                     mesh->id[0]); 
-        glBufferData(GL_ARRAY_BUFFER,
+        glCheck(glBindBuffer(GL_ARRAY_BUFFER,
+                     mesh->id[0])); 
+        glCheck(glBufferData(GL_ARRAY_BUFFER,
                      nbVertices*3*sizeof(float),
                      vertices,
-                     GL_STATIC_DRAW);
+                     GL_STATIC_DRAW));
   
         // indices
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,
-                     mesh->id[1]); 
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+        glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,
+                     mesh->id[1])); 
+        glCheck(glBufferData(GL_ELEMENT_ARRAY_BUFFER,
                      nbFaces*3*sizeof(unsigned int),
                      faces,
-                     GL_STATIC_DRAW);
+                     GL_STATIC_DRAW));
         
     }
     void destroyMesh(Mesh* mesh){ 
-        glDeleteBuffers(2,mesh->id);
+        glCheck(glDeleteBuffers(2,mesh->id));
     }
     void drawMesh   (Mesh* mesh, math::Matrix4f m){
-        glMatrixMode(GL_MODELVIEW);
+       /* glMatrixMode(GL_MODELVIEW);
         math::Matrix4f mv = currentViewMatrix * m;
         glLoadMatrixf(mv.m);
         
         glMatrixMode(GL_PROJECTION);
-        glLoadMatrixf(currentProjectionMatrix.m);
+        glLoadMatrixf(currentProjectionMatrix.m);*/
         
-        glBindBuffer(GL_ARRAY_BUFFER,mesh->id[0]);
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0,
+        glCheck(glBindBuffer(GL_ARRAY_BUFFER,mesh->id[0]));
+        glCheck(glEnableVertexAttribArray(0));
+        glCheck(glVertexAttribPointer(0,
                               3,
                               GL_FLOAT,
                               GL_FALSE,
                               0,
-                              (void *)0);
+                              (void *)0));
 
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,mesh->id[1]);
-        glDrawElements(GL_TRIANGLES,
+        glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,mesh->id[1]));
+        glCheck(glDrawElements(GL_TRIANGLES,
                        mesh->nbFaces,
                        GL_UNSIGNED_INT,
-                       (void *)0);
+                       (void *)0));
 
-        glBindFramebuffer(GL_FRAMEBUFFER,0);
+        glCheck(glBindFramebuffer(GL_FRAMEBUFFER,0));
     }
     
     //shader
