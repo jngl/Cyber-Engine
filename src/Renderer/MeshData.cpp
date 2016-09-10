@@ -11,22 +11,17 @@ void MeshData::addFace(unsigned int p1,
                            unsigned int p2,
                            unsigned int p3)
 {
-	elements.push_back((unsigned int)p1);
-	elements.push_back((unsigned int)p2);
-	elements.push_back((unsigned int)p3);
+	elements.push_back(p1);
+	elements.push_back(p2);
+	elements.push_back(p3);
 }
 void MeshData::addFace(unsigned int p1, 
                            unsigned int p2,
                            unsigned int p3,
                            unsigned int p4)
 {
-	elements.push_back((unsigned int)p1);
-	elements.push_back((unsigned int)p2);
-	elements.push_back((unsigned int)p3);
-	
-	elements.push_back((unsigned int)p1);
-	elements.push_back((unsigned int)p3);
-	elements.push_back((unsigned int)p4);
+    addFace(p1, p2, p3);
+    addFace(p1, p3, p4);
 }
 
 void MeshData::makeCube(){

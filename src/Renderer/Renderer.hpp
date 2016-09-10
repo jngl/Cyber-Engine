@@ -11,12 +11,23 @@ namespace Renderer
     void createRenderer();
     void destroyRenderer();
     
-    //view
-    void setViewMatrix(math::Matrix4f m);
-    extern math::Matrix4f currentViewMatrix;
+    //Texture
+    struct Texture;
     
-    //projection
-    void setProjectionMatrix(math::Matrix4f m);
+    void createTexture  (Texture* t,std::string file);
+    void destroyTexture (Texture* t);
+    void setTexture     (Texture* t);
+    
+    //Shader
+    struct Shader
+    {
+        GLuint id;
+        GLuint GBuffersMdvMatLoc;
+        GLuint GBuffersVertexLoc;
+    };
+    
+    void createShader   (Shader& s, std::string vert, std::string frag);
+    void destroyShader  (Shader& s);
     
     //Mesh
     struct Mesh{
@@ -31,22 +42,9 @@ namespace Renderer
                      unsigned int* faces
                     );
     void destroyMesh(Mesh* mesh);
-    void drawMesh   (Mesh* mesh, math::Matrix4f m);
-    
-    //Texture
-    struct Texture;
-    
-    void createTexture  (Texture* t,std::string file);
-    void destroyTexture (Texture* t);
-    void setTexture     (Texture* t);
-    
-    //Shader
-    typedef GLuint ShaderId;
-    
-    void createShader   (ShaderId& s, std::string vert, std::string frag);
-    void destroyShader  (ShaderId& s);
-    void setShader      (ShaderId& s);
-    //todo add param
+    void drawMesh   (Mesh* mesh, 
+                     math::Matrix4f mvp,
+                     Shader& shader);
     
     //FrameBuffer
     struct FrameBuffer;

@@ -7,10 +7,6 @@
 
 namespace Renderer
 {    
-    math::Matrix4f currentViewMatrix;
-    
-    math::Matrix4f currentProjectionMatrix;
-    
     //render
     void createRenderer(){
         glCheck(glEnable(GL_DEPTH_TEST));
@@ -19,16 +15,6 @@ namespace Renderer
     }
     
     void destroyRenderer(){
-    }
-    
-    //view
-    void setViewMatrix(math::Matrix4f m){
-        currentViewMatrix = m;
-    }
-    
-    //projection
-    void setProjectionMatrix(math::Matrix4f m){
-        currentProjectionMatrix = m;
     }
     
     //Mesh
@@ -63,16 +49,17 @@ namespace Renderer
     void destroyMesh(Mesh* mesh){ 
         glCheck(glDeleteBuffers(2,mesh->id));
     }
-    void drawMesh   (Mesh* mesh, math::Matrix4f m){
-       /* glMatrixMode(GL_MODELVIEW);
-        math::Matrix4f mv = currentViewMatrix * m;
-        glLoadMatrixf(mv.m);
+    void drawMesh   (Mesh* mesh, 
+                     math::Matrix4f mvp,
+                     Shader& shader){
         
-        glMatrixMode(GL_PROJECTION);
-        glLoadMatrixf(currentProjectionMatrix.m);*/
+        glCheck(glUseProgram(shader.id));
+        glCheck(glUniformMatrix4fv(
+            shader.GBuffersMdvMatLoc,1,GL_FALSE,&mvp[0]));
         
         glCheck(glBindBuffer(GL_ARRAY_BUFFER,mesh->id[0]));
-        glCheck(glEnableVertexAttribArray(0));
+        glCheck(glEnableVertexAttribArray(
+            shader.GBuffersVertexLoc));
         glCheck(glVertexAttribPointer(0,
                               3,
                               GL_FLOAT,
@@ -141,7 +128,7 @@ namespace Renderer
         return shaderCode;
     }
         
-    void createShader(ShaderId& shader, std::string vert, std::string frag){
+    void createShader(Shader& shader, std::string vert, std::string frag){
         // create and compile vertex shader object
         std::string vertexCode   = getCode(vert.c_str());
         const char * vertexCodeC = vertexCode.c_str();
@@ -159,24 +146,28 @@ namespace Renderer
         checkCompilation(fragmentId);
 
         // create, attach and link program object
-        shader = glCreateProgram();
-        glAttachShader(shader,vertexId);
-        glAttachShader(shader,fragmentId);
-        glLinkProgram(shader);
-        checkLinks(shader);
+        shader.id = glCreateProgram();
+        glAttachShader(shader.id,vertexId);
+        glAttachShader(shader.id,fragmentId);
+        glLinkProgram(shader.id);
+        checkLinks(shader.id);
 
         // delete vertex and fragment ids
         glDeleteShader(vertexId);
         glDeleteShader(fragmentId);
+        
+        // location
+        glCheck(glUseProgram(shader.id));
+        shader.GBuffersMdvMatLoc =
+                glGetUniformLocation(shader.id,"MVP");
+        shader.GBuffersVertexLoc =
+                glGetAttribLocation(shader.id,"position");
+        glCheckError(__FILE__, __LINE__);
     }
     
-    void destroyShade(ShaderId& shader){
-        if(glIsProgram(shader)) {
-            glDeleteProgram(shader);
+    void destroyShade(Shader& shader){
+        if(glIsProgram(shader.id)) {
+            glDeleteProgram(shader.id);
         }
-    }
-    
-    void setShader(ShaderId& shader){
-        glUseProgram(shader);
     }
 }

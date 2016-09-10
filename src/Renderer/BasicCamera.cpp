@@ -7,7 +7,7 @@
 #include "Renderer.hpp"
 
 void updateBasicCamera(BasicCamera& camera){
-    math::Matrix4f view;
+    
     math::Vec3f pos = camera.angle.toDirection() * camera.dist;
     math::Vec3f up(0.f, 1.f, 0.f);
     math::Vec3f zero(0.f, 0.f, 0.f);
@@ -26,6 +26,6 @@ void updateBasicCamera(BasicCamera& camera){
         camera.angle.pitch.rotateRadian(-0.0001f);
     }
     
-    view.lookAt(pos, zero, up);
-    Renderer::setViewMatrix(view);
+    camera.viewMatrix.setIdentity();
+    camera.viewMatrix.lookAt(pos, zero, up);
 }

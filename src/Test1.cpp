@@ -29,20 +29,15 @@ void test1(){
                data.elements.data());
     
     
-    Renderer::ShaderId shader;
+    Renderer::Shader shader;
     Renderer::createShader(shader,
                  "../data/shaders/basic.vert",
                  "../data/shaders/basic.frag");
-    glCheck(glUseProgram(shader));
-    GLuint GBuffersMdvMatLoc = glGetUniformLocation(shader,"MVP");
-    GLuint GBuffersVertexLoc = glGetAttribLocation(shader,"position");
-    glCheckError(__FILE__, __LINE__);
     
     math::Matrix4f model;
     
     math::Matrix4f proj;
     proj.setPerspective(45.f, 4.f/3.f, 0.01f, 10000.f);
-    Renderer::setProjectionMatrix(proj);
     
     while(System::isRunning()){
         System::doEvent();
@@ -50,31 +45,9 @@ void test1(){
      
         updateBasicCamera(cam);
         
-        math::Matrix4f MVP = proj * Renderer::currentViewMatrix * model;
+        math::Matrix4f MVP = proj * cam.viewMatrix * model;
         
-        glCheck(glUseProgram(shader));
-        glCheck(glUniformMatrix4fv(GBuffersMdvMatLoc,1,GL_FALSE,&MVP[0]));
-        
-        
-        //Renderer::drawMesh(&mesh, model);
-        
-        
-        glCheck(glBindBuffer(GL_ARRAY_BUFFER,mesh.id[0]));
-        glCheck(glEnableVertexAttribArray(GBuffersVertexLoc));
-        glCheck(glVertexAttribPointer(0,
-                              3,
-                              GL_FLOAT,
-                              GL_FALSE,
-                              0,
-                              (void *)0));
-
-        glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,mesh.id[1]));
-        glCheck(glDrawElements(GL_TRIANGLES,
-                       mesh.nbFaces,
-                       GL_UNSIGNED_INT,
-                       (void *)0));
-
-        glCheck(glBindFramebuffer(GL_FRAMEBUFFER,0));
+        Renderer::drawMesh(&mesh, MVP, shader);
         
         
         System::endFrame();
