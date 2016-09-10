@@ -25,6 +25,7 @@ void test1(){
     createMesh(&mesh,
                data.vertices.size(),
                &(data.vertices[0].x),
+               &(data.texCoord[0].x),
                data.elements.size(),
                data.elements.data());
     

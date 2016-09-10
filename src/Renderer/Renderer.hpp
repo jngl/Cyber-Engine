@@ -24,6 +24,7 @@ namespace Renderer
         GLuint id;
         GLuint GBuffersMdvMatLoc;
         GLuint GBuffersVertexLoc;
+        GLuint GBuffersTexCoordLoc;
     };
     
     void createShader   (Shader& s, std::string vert, std::string frag);
@@ -31,13 +32,14 @@ namespace Renderer
     
     //Mesh
     struct Mesh{
-        GLuint id[2];
+        GLuint id[3];
         unsigned int nbFaces;
     };
     
     void createMesh (Mesh* mesh,
                      unsigned int nbVertices,
                      float* vertices,
+                     float* texCoord,
                      unsigned int nbFaces,
                      unsigned int* faces
                     );

@@ -21,11 +21,12 @@ namespace Renderer
     void createMesh (Mesh* mesh,
                      unsigned int nbVertices,
                      float* vertices,
+                     float* texCoord,
                      unsigned int nbFaces,
                      unsigned int* faces
                     )
     {
-        glCheck(glGenBuffers(2, mesh->id));
+        glCheck(glGenBuffers(3, mesh->id));
         
         mesh->nbFaces = nbFaces;
         
@@ -36,10 +37,18 @@ namespace Renderer
                      nbVertices*3*sizeof(float),
                      vertices,
                      GL_STATIC_DRAW));
+        
+        //texCoord
+        glCheck(glBindBuffer(GL_ARRAY_BUFFER,
+                     mesh->id[1])); 
+        glCheck(glBufferData(GL_ARRAY_BUFFER,
+                     nbVertices*2*sizeof(float),
+                     texCoord,
+                     GL_STATIC_DRAW));
   
         // indices
         glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,
-                     mesh->id[1])); 
+                     mesh->id[2])); 
         glCheck(glBufferData(GL_ELEMENT_ARRAY_BUFFER,
                      nbFaces*3*sizeof(unsigned int),
                      faces,
@@ -66,14 +75,22 @@ namespace Renderer
                               GL_FALSE,
                               0,
                               (void *)0));
+        
+        glCheck(glBindBuffer(GL_ARRAY_BUFFER,mesh->id[1]));
+        glCheck(glEnableVertexAttribArray(
+            shader.GBuffersTexCoordLoc));
+        glCheck(glVertexAttribPointer(0,
+                              2,
+                              GL_FLOAT,
+                              GL_FALSE,
+                              0,
+                              (void *)0));
 
-        glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,mesh->id[1]));
+        glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,mesh->id[2]));
         glCheck(glDrawElements(GL_TRIANGLES,
                        mesh->nbFaces,
                        GL_UNSIGNED_INT,
                        (void *)0));
-
-        glCheck(glBindFramebuffer(GL_FRAMEBUFFER,0));
     }
     
     //shader
@@ -103,7 +120,7 @@ namespace Renderer
         glGetProgramiv(programId,GL_LINK_STATUS,&result);
         glGetProgramiv(programId,GL_INFO_LOG_LENGTH,&infoLogLength);
         
-        if(infoLogLength>0) {
+        if(!result || infoLogLength>0) {
             std::vector<char> message(infoLogLength+1);
             glGetProgramInfoLog(programId,infoLogLength,NULL,&message[0]);
             printf("%s\n", &message[0]);
@@ -162,7 +179,12 @@ namespace Renderer
                 glGetUniformLocation(shader.id,"MVP");
         shader.GBuffersVertexLoc =
                 glGetAttribLocation(shader.id,"position");
+        //glCheckError(__FILE__, __LINE__);
+        shader.GBuffersTexCoordLoc =
+                glGetAttribLocation(shader.id,"texCoord");
         glCheckError(__FILE__, __LINE__);
+        
+        std::cout<<shader.GBuffersVertexLoc<<" "<<shader.GBuffersTexCoordLoc<<std::endl;
     }
     
     void destroyShade(Shader& shader){
