@@ -7,6 +7,7 @@ unsigned int MeshData::addVertex(math::Vec3f pos,
 	texCoord.push_back(ptexCoord);
 	return vertices.size()-1;
 }
+
 void MeshData::addFace(unsigned int p1, 
                            unsigned int p2,
                            unsigned int p3)
@@ -15,6 +16,7 @@ void MeshData::addFace(unsigned int p1,
 	elements.push_back(p2);
 	elements.push_back(p3);
 }
+
 void MeshData::addFace(unsigned int p1, 
                            unsigned int p2,
                            unsigned int p3,

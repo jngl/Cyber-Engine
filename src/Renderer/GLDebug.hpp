@@ -1,9 +1,9 @@
 #ifndef GL_DEBUG_HPP
 #define GL_DEBUG_HPP
 
-#include <string>
+#include <glad/glad.h>
 
-#include <GL/gl.h>
+#include <string>
 
 #define GL_DEBUG
 

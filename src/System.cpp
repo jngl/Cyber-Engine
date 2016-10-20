@@ -1,16 +1,25 @@
+#include <glad/glad.h>
+
 #include "System.hpp"
 
-#include <GL/glew.h>
-
 #include <string>
+#include <iostream>
 
 #include "Core/Error.hpp"
+
+#include "Renderer/GLDebug.hpp"
     
 core::EventManager<System::Key> mKeydown;
 core::EventManager<System::Key> mKeyup;
-SDL_Window *mWindow;
-SDL_GLContext mGLContext;
+SDL_Window *mWindow = nullptr;
+SDL_GLContext mGLContext = nullptr;
 bool mOpen = true;
+
+#ifdef GLAD_DEBUG
+void pre_gl_call(const char *name, void *funcptr, int len_args, ...) {
+    printf("Calling: %s (%d arguments)\n", name, len_args);
+}
+#endif
 
 namespace System
 {
@@ -20,15 +29,17 @@ namespace System
             throw core::Error(std::string("SDL_Init Error: ")+ SDL_GetError());
         }
         
-        //GL Attribute
-        //SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-        //SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
         
+        // OpenGL 3.1
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+        
+        // Double Buffer
         SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
         SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
         //sdl window
-        mWindow = SDL_CreateWindow("Hello World!", 100, 100, width, height, SDL_WINDOW_OPENGL);
+        mWindow = SDL_CreateWindow("Cyber engine", 100, 100, width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
 
         if (mWindow == nullptr){
             throw core::Error(std::string("SDL_CreateWindow Error: ")+ SDL_GetError());
@@ -42,12 +53,26 @@ namespace System
             throw core::Error(std::string("SDL_GL_CreateContext Error: ")+ SDL_GetError());
         }
         
-        //glew
-        GLenum err = glewInit();
-        if (GLEW_OK != err){
-            const char* erroMsg = (const char*)(glewGetErrorString(err));
-            throw core::Error(std::string("GLEW Error: ")+ erroMsg);
+        SDL_GL_MakeCurrent(mWindow, mGLContext);
+        
+        //glad
+        if(!gladLoadGL()) {
+            throw core::Error("Something went wrong with glad");
         }
+
+#ifdef GLAD_DEBUG
+        // before every opengl call call pre_gl_call
+       // glad_set_pre_callback(pre_gl_call);
+        // don't use the callback for glClear
+        // (glClear could be replaced with your own function)
+        glad_debug_glClear = glad_glClear;
+#endif
+
+        std::cout<<"OpenGL "<<GLVersion.major<<"."<<GLVersion.minor<<", GLSL "<<glGetString(GL_SHADING_LANGUAGE_VERSION)<<std::endl;
+        
+        glCheckError(__FILE__, __LINE__);
+
+
     }
 
     void destroy(){

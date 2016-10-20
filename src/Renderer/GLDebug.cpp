@@ -1,8 +1,10 @@
+#include <glad/glad.h>
+
 #include "GLDebug.hpp"
 
 #include "../Core/Error.hpp"
 
-#include <GLFW/glfw3.h>
+#include <iostream>
 
 void glCheckError(const std::string& file, unsigned int line)
 {
@@ -59,7 +61,7 @@ void glCheckError(const std::string& file, unsigned int line)
                 break;
             }
 
-            case GL_INVALID_FRAMEBUFFER_OPERATION_EXT :
+            case GL_INVALID_FRAMEBUFFER_OPERATION :
             {
                 error = "GL_INVALID_FRAMEBUFFER_OPERATION_EXT";
                 description = "the object bound to FRAMEBUFFER_BINDING_EXT is not \"framebuffer complete\"";

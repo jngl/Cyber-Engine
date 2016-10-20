@@ -28,11 +28,11 @@ include_directories(${SDL2_IMAGE_INCLUDE_DIR})
 find_package(OpenGL REQUIRED)
 include_directories(${OpenGL_INCLUDE_DIRS})
 
-#GLEW
-find_package(GLEW REQUIRED)
-include_directories(${GLEW_INCLUDE_DIRS})
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -DGL_GLEXT_PROTOTYPES")
 
 #Game
+include_directories(src/)
+
 file(GLOB_RECURSE CyberEngine_source_files src/*)
 add_executable(CyberEngine ${CyberEngine_source_files})
 TARGET_LINK_LIBRARIES(CyberEngine 
@@ -40,4 +40,5 @@ TARGET_LINK_LIBRARIES(CyberEngine
             ${SDL2_IMAGE_LIBRARY}
             ${OPENGL_LIBRARIES}
             ${GLEW_LIBRARIES}
+            ${CMAKE_DL_LIBS}
 )

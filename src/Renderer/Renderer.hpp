@@ -1,7 +1,8 @@
 #pragma once
 
+#include <glad/glad.h>
+
 #include <string>
-#include <GL/glew.h>
 
 #include "../Math/Matrix4.hpp"
 
@@ -23,8 +24,6 @@ namespace Renderer
     {
         GLuint id;
         GLuint GBuffersMdvMatLoc;
-        GLuint GBuffersVertexLoc;
-        GLuint GBuffersTexCoordLoc;
     };
     
     void createShader   (Shader& s, std::string vert, std::string frag);
@@ -32,16 +31,17 @@ namespace Renderer
     
     //Mesh
     struct Mesh{
-        GLuint id[3];
+        GLuint id[4];
         unsigned int nbFaces;
     };
     
     void createMesh (Mesh* mesh,
                      unsigned int nbVertices,
-                     float* vertices,
-                     float* texCoord,
+                     const float* vertices,
+                     const float* texCoord,
+                     const float* normals,
                      unsigned int nbFaces,
-                     unsigned int* faces
+                     const unsigned int* faces
                     );
     void destroyMesh(Mesh* mesh);
     void drawMesh   (Mesh* mesh, 

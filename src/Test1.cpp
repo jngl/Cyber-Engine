@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include <GL/glew.h>
+#include <glad/glad.h>
 
 #include "System.hpp"
 
@@ -10,24 +10,29 @@
 #include "Renderer/MeshData.hpp"
 #include "Renderer/BasicCamera.hpp"
 #include "Renderer/GLDebug.hpp"
+#include "Renderer/CubeData.hpp"
 
 #include "Math/Angle3.hpp"
+#include "Math/Vector3.hpp"
 
 void test1(){
     Renderer::createRenderer();
     
+    GLuint VertexArrayID;
+	glGenVertexArrays(1, &VertexArrayID);
+	glBindVertexArray(VertexArrayID);
+    
     BasicCamera cam;
     cam.dist=5.f;
     
-    MeshData data;
-    data.makeCube();
     Renderer::Mesh mesh;
     createMesh(&mesh,
-               data.vertices.size(),
-               &(data.vertices[0].x),
-               &(data.texCoord[0].x),
-               data.elements.size(),
-               data.elements.data());
+               cubeVerticesSize,
+               cubePos,
+               cubeTexCoord,
+               cubeNormal,
+               cubeIndexSize,
+               cubeIndex);
     
     
     Renderer::Shader shader;

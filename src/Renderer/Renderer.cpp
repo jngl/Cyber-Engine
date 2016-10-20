@@ -1,6 +1,9 @@
 #include "Renderer.hpp"
 
 #include "GLDebug.hpp"
+#include "CubeData.hpp"
+
+#include "../Core/Error.hpp"
 
 #include <fstream>
 #include <vector>
@@ -20,13 +23,14 @@ namespace Renderer
     //Mesh
     void createMesh (Mesh* mesh,
                      unsigned int nbVertices,
-                     float* vertices,
-                     float* texCoord,
+                     const float* vertices,
+                     const float* texCoord,
+                     const float* normals,
                      unsigned int nbFaces,
-                     unsigned int* faces
+                     const unsigned int* faces
                     )
     {
-        glCheck(glGenBuffers(3, mesh->id));
+        glCheck(glGenBuffers(4, mesh->id));
         
         mesh->nbFaces = nbFaces;
         
@@ -34,7 +38,7 @@ namespace Renderer
         glCheck(glBindBuffer(GL_ARRAY_BUFFER,
                      mesh->id[0])); 
         glCheck(glBufferData(GL_ARRAY_BUFFER,
-                     nbVertices*3*sizeof(float),
+                     sizeof(float)*3*nbVertices,
                      vertices,
                      GL_STATIC_DRAW));
         
@@ -42,15 +46,23 @@ namespace Renderer
         glCheck(glBindBuffer(GL_ARRAY_BUFFER,
                      mesh->id[1])); 
         glCheck(glBufferData(GL_ARRAY_BUFFER,
-                     nbVertices*2*sizeof(float),
+                     sizeof(float)*2*nbVertices,
                      texCoord,
+                     GL_STATIC_DRAW));
+        
+        //normal
+        glCheck(glBindBuffer(GL_ARRAY_BUFFER,
+                     mesh->id[2])); 
+        glCheck(glBufferData(GL_ARRAY_BUFFER,
+                     sizeof(float)*3*nbVertices,
+                     normals,
                      GL_STATIC_DRAW));
   
         // indices
         glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,
-                     mesh->id[2])); 
+                     mesh->id[3])); 
         glCheck(glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-                     nbFaces*3*sizeof(unsigned int),
+                     sizeof(unsigned int) * nbFaces,
                      faces,
                      GL_STATIC_DRAW));
         
@@ -63,34 +75,52 @@ namespace Renderer
                      Shader& shader){
         
         glCheck(glUseProgram(shader.id));
-        glCheck(glUniformMatrix4fv(
-            shader.GBuffersMdvMatLoc,1,GL_FALSE,&mvp[0]));
+        glCheck(glUniformMatrix4fv(shader.GBuffersMdvMatLoc,1,GL_FALSE,&mvp[0]));
         
-        glCheck(glBindBuffer(GL_ARRAY_BUFFER,mesh->id[0]));
-        glCheck(glEnableVertexAttribArray(
-            shader.GBuffersVertexLoc));
-        glCheck(glVertexAttribPointer(0,
-                              3,
-                              GL_FLOAT,
-                              GL_FALSE,
-                              0,
-                              (void *)0));
+        //vertex
+        glCheck(glEnableVertexAttribArray(0));
+		glCheck(glBindBuffer(GL_ARRAY_BUFFER, mesh->id[0]));
+		glCheck(glVertexAttribPointer(
+			0,                  // attribute
+			3,                  // size
+			GL_FLOAT,           // type
+			GL_FALSE,           // normalized?
+			0,                  // stride
+			(void*)0            // array buffer offset
+		));
         
+        //texCoord
+        glCheck(glEnableVertexAttribArray(1));
         glCheck(glBindBuffer(GL_ARRAY_BUFFER,mesh->id[1]));
-        glCheck(glEnableVertexAttribArray(
-            shader.GBuffersTexCoordLoc));
-        glCheck(glVertexAttribPointer(0,
+        glCheck(glVertexAttribPointer(
+                              1,
                               2,
                               GL_FLOAT,
                               GL_FALSE,
                               0,
                               (void *)0));
+        
+        //normal
+        glCheck(glEnableVertexAttribArray(2));
+        glCheck(glBindBuffer(GL_ARRAY_BUFFER,mesh->id[2]));
+        glCheck(glVertexAttribPointer(
+                              2,
+                              3,
+                              GL_FLOAT,
+                              GL_FALSE,
+                              0,
+                              (void *)0));
 
-        glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,mesh->id[2]));
+        //index
+        glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,mesh->id[3]));
         glCheck(glDrawElements(GL_TRIANGLES,
                        mesh->nbFaces,
                        GL_UNSIGNED_INT,
-                       (void *)0));
+                       (void *)0));          
+    
+        glCheck(glDisableVertexAttribArray(0));
+		glCheck(glDisableVertexAttribArray(1));
+		glCheck(glDisableVertexAttribArray(2));
     }
     
     //shader
@@ -99,15 +129,15 @@ namespace Renderer
         // check if the compilation was successfull (and display syntax errors)
         // call it after each shader compilation
         GLint result = GL_FALSE;
-        int infoLogLength;
+        int infoLogLength(0);
 
-        glGetShaderiv(shaderId,GL_COMPILE_STATUS,&result);
-        glGetShaderiv(shaderId,GL_INFO_LOG_LENGTH,&infoLogLength);
+        glCheck(glGetShaderiv(shaderId,GL_COMPILE_STATUS,&result));
+        glCheck(glGetShaderiv(shaderId,GL_INFO_LOG_LENGTH,&infoLogLength));
         
-        if(infoLogLength>0) {
+        if(!result && infoLogLength>0) {
             std::vector<char> message(infoLogLength+1);
-            glGetShaderInfoLog(shaderId,infoLogLength,NULL,&message[0]);
-            printf("%s\n", &message[0]);
+            glCheck(glGetShaderInfoLog(shaderId,infoLogLength,NULL,&message[0]));
+            throw core::Error(std::string("GLSL code error : ")+&message[0]);
         }
     }
 
@@ -117,13 +147,14 @@ namespace Renderer
         GLint result = GL_FALSE;
         int infoLogLength;
 
-        glGetProgramiv(programId,GL_LINK_STATUS,&result);
-        glGetProgramiv(programId,GL_INFO_LOG_LENGTH,&infoLogLength);
+        glCheck(glGetProgramiv(programId,GL_LINK_STATUS,&result));
+        glCheck(glGetProgramiv(programId,GL_INFO_LOG_LENGTH,&infoLogLength));
         
-        if(!result || infoLogLength>0) {
+        if(!result && infoLogLength>0) {
             std::vector<char> message(infoLogLength+1);
-            glGetProgramInfoLog(programId,infoLogLength,NULL,&message[0]);
-            printf("%s\n", &message[0]);
+            glCheck(glGetProgramInfoLog(programId,infoLogLength,NULL,&message[0]));
+            
+            throw core::Error(std::string("GLSL link error : ")+&message[0]);
         }
     }
 
@@ -150,41 +181,33 @@ namespace Renderer
         std::string vertexCode   = getCode(vert.c_str());
         const char * vertexCodeC = vertexCode.c_str();
         GLuint vertexId   = glCreateShader(GL_VERTEX_SHADER);
-        glShaderSource(vertexId,1,&(vertexCodeC),NULL);
-        glCompileShader(vertexId);
+        glCheck(glShaderSource(vertexId,1,&(vertexCodeC),NULL));
+        glCheck(glCompileShader(vertexId));
         checkCompilation(vertexId);
 
         // create and compile fragment shader object
         std::string fragmentCode = getCode(frag.c_str());
         const char * fragmentCodeC = fragmentCode.c_str();
         GLuint fragmentId = glCreateShader(GL_FRAGMENT_SHADER);
-        glShaderSource(fragmentId,1,&(fragmentCodeC),NULL);
-        glCompileShader(fragmentId);
+        glCheck(glShaderSource(fragmentId,1,&(fragmentCodeC),NULL));
+        glCheck(glCompileShader(fragmentId));
         checkCompilation(fragmentId);
 
         // create, attach and link program object
-        shader.id = glCreateProgram();
-        glAttachShader(shader.id,vertexId);
-        glAttachShader(shader.id,fragmentId);
-        glLinkProgram(shader.id);
+        glCheck(shader.id = glCreateProgram());
+        glCheck(glAttachShader(shader.id,vertexId));
+        glCheck(glAttachShader(shader.id,fragmentId));
+        glCheck(glLinkProgram(shader.id));
         checkLinks(shader.id);
 
         // delete vertex and fragment ids
-        glDeleteShader(vertexId);
-        glDeleteShader(fragmentId);
+        glCheck(glDeleteShader(vertexId));
+        glCheck(glDeleteShader(fragmentId));
         
         // location
         glCheck(glUseProgram(shader.id));
-        shader.GBuffersMdvMatLoc =
-                glGetUniformLocation(shader.id,"MVP");
-        shader.GBuffersVertexLoc =
-                glGetAttribLocation(shader.id,"position");
-        //glCheckError(__FILE__, __LINE__);
-        shader.GBuffersTexCoordLoc =
-                glGetAttribLocation(shader.id,"texCoord");
-        glCheckError(__FILE__, __LINE__);
-        
-        std::cout<<shader.GBuffersVertexLoc<<" "<<shader.GBuffersTexCoordLoc<<std::endl;
+        glCheck(shader.GBuffersMdvMatLoc =
+                glGetUniformLocation(shader.id,"MVP"));
     }
     
     void destroyShade(Shader& shader){
