@@ -17,7 +17,7 @@ void test1(){
     Renderer::createRenderer();
     
     BasicCamera cam;
-    cam.dist=5.f;
+    cam.dist=2.f;
     
     Renderer::Mesh mesh;
     createMesh(&mesh,
@@ -35,7 +35,7 @@ void test1(){
                  "../data/shaders/basic.frag");
     
     Renderer::Texture tex;
-    Renderer::createTexture(&tex, "../data/rocks_3_by_nobiax/diffuse.dds");
+    Renderer::createTexture(&tex, "../data/byNobiax/pattern_391/diffuse.dds");
     
     glm::mat4 model(1.0f);
     
@@ -49,11 +49,14 @@ void test1(){
         
         glm::mat4 MVP = proj * cam.viewMatrix * model;
         
+        Renderer::setTexture(&tex, &shader);
+        
         Renderer::drawMesh(&mesh, MVP, shader);
         
         
         System::endFrame();
     }
     
+    Renderer::destroyTexture(&tex);
     Renderer::destroyRenderer();
 }

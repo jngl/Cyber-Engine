@@ -12,6 +12,17 @@ namespace Renderer
     void createRenderer();
     void destroyRenderer();
     
+    //Shader
+    struct Shader
+    {
+        GLuint id;
+        GLuint GBuffersMdvMatLoc;
+        GLuint texture;
+    };
+    
+    void createShader   (Shader& s, std::string vert, std::string frag);
+    void destroyShader  (Shader& s);
+    
     //Texture
     struct Texture{
         GLuint id;
@@ -19,17 +30,7 @@ namespace Renderer
     
     void createTexture  (Texture* t,std::string file);
     void destroyTexture (Texture* t);
-    void setTexture     (Texture* t);
-    
-    //Shader
-    struct Shader
-    {
-        GLuint id;
-        GLuint GBuffersMdvMatLoc;
-    };
-    
-    void createShader   (Shader& s, std::string vert, std::string frag);
-    void destroyShader  (Shader& s);
+    void setTexture     (Texture* t, Shader* s);
     
     //Mesh
     struct Mesh{

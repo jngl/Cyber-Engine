@@ -217,6 +217,7 @@ namespace Renderer
         glCheck(glUseProgram(shader.id));
         glCheck(shader.GBuffersMdvMatLoc =
                 glGetUniformLocation(shader.id,"MVP"));
+        glCheck(shader.texture  = glGetUniformLocation(shader.id, "textureSampler"));
     }
     
     void destroyShade(Shader& shader){
@@ -291,7 +292,11 @@ namespace Renderer
         // "Lie" la nouvelle texture : tous les futurs appels aux fonctions de texture vont modifier cette texture
         glBindTexture(GL_TEXTURE_2D, textureID);
         
-            unsigned int blockSize = (format == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT) ? 8 : 16; 
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); 
+        
+            
+        unsigned int blockSize = (format == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT) ? 8 : 16; 
         unsigned int offset = 0; 
     
         /* charge les MIP maps */ 
@@ -311,10 +316,14 @@ namespace Renderer
     }
     
     void destroyTexture (Texture* t){
-        
+        glDeleteTextures(1, &(t->id));
     }
     
-    void setTexture     (Texture* t){
-        
+    void setTexture (Texture* t, Shader* s){
+        // Bind our texture in Texture Unit 0
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, t->id);
+		// Set our "myTextureSampler" sampler to user Texture Unit 0
+		glUniform1i(s->texture, 0);
     }
 }
