@@ -2,16 +2,13 @@
 
 #include "../System.hpp"
 
-#include "../Math/Matrix4.hpp"
+#include <glm/vec3.hpp>
+#include <glm/mat4x4.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "Renderer.hpp"
 
 void updateBasicCamera(BasicCamera& camera){
-    
-    math::Vec3f pos = camera.angle.toDirection() * camera.dist;
-    math::Vec3f up(0.f, 1.f, 0.f);
-    math::Vec3f zero(0.f, 0.f, 0.f);
-    
     const float speed = 0.0001f;
     
     if(System::keyIsPressed(System::Key::KEY_z)){
@@ -19,15 +16,16 @@ void updateBasicCamera(BasicCamera& camera){
     }else if(System::keyIsPressed(System::Key::KEY_s)){
         camera.dist += speed;
     }else if(System::keyIsPressed(System::Key::KEY_RIGHT)){
-        camera.angle.yaw.rotateRadian(speed);
+        camera.angle.x += speed;
     }else if(System::keyIsPressed(System::Key::KEY_LEFT)){
-        camera.angle.yaw.rotateRadian(-speed);
+        camera.angle.x -= speed;
     }else if(System::keyIsPressed(System::Key::KEY_UP)){
-        camera.angle.pitch.rotateRadian(speed);
+        camera.angle.y += speed;
     }else if(System::keyIsPressed(System::Key::KEY_DOWN)){
-        camera.angle.pitch.rotateRadian(-speed);
+        camera.angle.y -= speed;
     }
     
-    camera.viewMatrix.setIdentity();
-    camera.viewMatrix.lookAt(pos, zero, up);
+    glm::mat4 ViewTranslate = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -camera.dist));
+    glm::mat4 ViewRotateX = glm::rotate(ViewTranslate, camera.angle.y, glm::vec3(-1.0f, 0.0f, 0.0f));
+    camera.viewMatrix = glm::rotate(ViewRotateX, camera.angle.x, glm::vec3(0.0f, 1.0f, 0.0f));
 }

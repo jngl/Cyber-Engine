@@ -4,7 +4,7 @@
 
 #include <string>
 
-#include "../Math/Matrix4.hpp"
+#include <glm/mat4x4.hpp>
 
 namespace Renderer
 {
@@ -13,7 +13,9 @@ namespace Renderer
     void destroyRenderer();
     
     //Texture
-    struct Texture;
+    struct Texture{
+        GLuint id;
+    };
     
     void createTexture  (Texture* t,std::string file);
     void destroyTexture (Texture* t);
@@ -45,7 +47,7 @@ namespace Renderer
                     );
     void destroyMesh(Mesh* mesh);
     void drawMesh   (Mesh* mesh, 
-                     math::Matrix4f mvp,
+                     glm::mat4 mvp,
                      Shader& shader);
     
     //FrameBuffer

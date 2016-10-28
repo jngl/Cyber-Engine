@@ -1,13 +1,13 @@
 #pragma once
 
-#include "../Math/Angle3.hpp"
-#include "../Math/Matrix4.hpp"
+#include <glm/vec2.hpp>
+#include <glm/mat4x4.hpp>
 
 struct BasicCamera
 {
     float dist;
-    math::Angle3f angle;
-    math::Matrix4f viewMatrix;
+    glm::vec2 angle;
+    glm::mat4 viewMatrix;
 };
 
 void updateBasicCamera(BasicCamera& camera);

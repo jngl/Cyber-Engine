@@ -30,6 +30,9 @@ include_directories(${OpenGL_INCLUDE_DIRS})
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -DGL_GLEXT_PROTOTYPES")
 
+#GLM
+find_package(glm REQUIRED)
+
 #Game
 include_directories(src/)
 

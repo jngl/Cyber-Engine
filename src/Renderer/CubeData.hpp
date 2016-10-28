@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../Math/Vector3.hpp"
-
 const float cubePos[] = { 
     //top +y
     0.5f, 0.5f, 0.5f,

@@ -1,26 +1,20 @@
 #include "Test1.hpp"
 
-#include <iostream>
-
-#include <glad/glad.h>
-
 #include "System.hpp"
 
 #include "Renderer/Renderer.hpp"
-#include "Renderer/MeshData.hpp"
 #include "Renderer/BasicCamera.hpp"
-#include "Renderer/GLDebug.hpp"
 #include "Renderer/CubeData.hpp"
 
-#include "Math/Angle3.hpp"
-#include "Math/Vector3.hpp"
+#include <iostream>
+#include <cassert>
+using namespace std;
 
-void test1(){
+#include <glm/mat4x4.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+void test1(){ 
     Renderer::createRenderer();
-    
-    GLuint VertexArrayID;
-	glGenVertexArrays(1, &VertexArrayID);
-	glBindVertexArray(VertexArrayID);
     
     BasicCamera cam;
     cam.dist=5.f;
@@ -40,10 +34,12 @@ void test1(){
                  "../data/shaders/basic.vert",
                  "../data/shaders/basic.frag");
     
-    math::Matrix4f model;
+    Renderer::Texture tex;
+    Renderer::createTexture(&tex, "../data/rocks_3_by_nobiax/diffuse.dds");
     
-    math::Matrix4f proj;
-    proj.setPerspective(45.f, 4.f/3.f, 0.01f, 10000.f);
+    glm::mat4 model(1.0f);
+    
+    glm::mat4 proj = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.f); 
     
     while(System::isRunning()){
         System::doEvent();
@@ -51,7 +47,7 @@ void test1(){
      
         updateBasicCamera(cam);
         
-        math::Matrix4f MVP = proj * cam.viewMatrix * model;
+        glm::mat4 MVP = proj * cam.viewMatrix * model;
         
         Renderer::drawMesh(&mesh, MVP, shader);
         

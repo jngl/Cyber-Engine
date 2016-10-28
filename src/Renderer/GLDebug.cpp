@@ -40,7 +40,7 @@ void glCheckError(const std::string& file, unsigned int line)
                 break;
             }
 
-            case GL_STACK_OVERFLOW :
+            /*case GL_STACK_OVERFLOW :
             {
                 error = "GL_STACK_OVERFLOW";
                 description = "this command would cause a stack overflow";
@@ -52,7 +52,7 @@ void glCheckError(const std::string& file, unsigned int line)
                 error = "GL_STACK_UNDERFLOW";
                 description = "this command would cause a stack underflow";
                 break;
-            }
+            }*/
 
             case GL_OUT_OF_MEMORY :
             {

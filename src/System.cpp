@@ -32,7 +32,7 @@ namespace System
         
         // OpenGL 3.1
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
         
         // Double Buffer
         SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);

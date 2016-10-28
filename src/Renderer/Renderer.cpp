@@ -5,13 +5,22 @@
 
 #include "../Core/Error.hpp"
 
+#include <glm/gtc/type_ptr.hpp>
+
 #include <fstream>
 #include <vector>
+#include <iostream>
+#include <cstdio>
 
 namespace Renderer
 {    
     //render
     void createRenderer(){
+        GLuint VertexArrayID;
+        glGenVertexArrays(1, &VertexArrayID);
+        glBindVertexArray(VertexArrayID);
+    
+        
         glCheck(glEnable(GL_DEPTH_TEST));
         
         glCheck(glViewport(0,0,800,600));
@@ -71,11 +80,11 @@ namespace Renderer
         glCheck(glDeleteBuffers(2,mesh->id));
     }
     void drawMesh   (Mesh* mesh, 
-                     math::Matrix4f mvp,
+                     glm::mat4 mvp,
                      Shader& shader){
         
         glCheck(glUseProgram(shader.id));
-        glCheck(glUniformMatrix4fv(shader.GBuffersMdvMatLoc,1,GL_FALSE,&mvp[0]));
+        glCheck(glUniformMatrix4fv(shader.GBuffersMdvMatLoc,1,GL_FALSE,glm::value_ptr(mvp)));
         
         //vertex
         glCheck(glEnableVertexAttribArray(0));
@@ -164,7 +173,7 @@ namespace Renderer
         std::ifstream shaderStream(file_path,std::ios::in);
 
         if(!shaderStream.is_open()) {
-            cout << "Unable to open " << file_path << endl;
+            std::cerr << "Unable to open " << file_path << std::endl;
             return "";
         }
 
@@ -214,5 +223,98 @@ namespace Renderer
         if(glIsProgram(shader.id)) {
             glDeleteProgram(shader.id);
         }
+    }
+    
+    #define FOURCC_DXT1 0x31545844 // Equivalent to "DXT1" in ASCII
+    #define FOURCC_DXT3 0x33545844 // Equivalent to "DXT3" in ASCII
+    #define FOURCC_DXT5 0x35545844 // Equivalent to "DXT5" in ASCII
+    
+    void createTexture  (Texture* t,std::string file){
+        unsigned char header[124]; 
+ 
+        FILE *fp; 
+    
+        /* essaie d'ouvrir le fichier */ 
+        fp = fopen(file.c_str(), "rb"); 
+        if (fp == NULL) 
+            throw core::Error(std::string("error with dds file"));
+    
+        /* vérifie le type du fichier */ 
+        char filecode[4]; 
+        fread(filecode, 1, 4, fp); 
+        if (strncmp(filecode, "DDS ", 4) != 0) { 
+            fclose(fp); 
+            throw core::Error(std::string("error in dds file"));
+        } 
+    
+        /* récupère la description de la surface */ 
+        fread(&header, 124, 1, fp); 
+    
+        unsigned int height      = *(unsigned int*)&(header[8 ]); 
+        unsigned int width         = *(unsigned int*)&(header[12]); 
+        unsigned int linearSize     = *(unsigned int*)&(header[16]); 
+        unsigned int mipMapCount = *(unsigned int*)&(header[24]); 
+        unsigned int fourCC      = *(unsigned int*)&(header[80]);
+        
+            unsigned char * buffer; 
+        unsigned int bufsize; 
+        /* quelle va être la taille des données incluant les MIP maps ? */ 
+        bufsize = mipMapCount > 1 ? linearSize * 2 : linearSize; 
+        buffer = (unsigned char*)malloc(bufsize * sizeof(unsigned char)); 
+        fread(buffer, 1, bufsize, fp); 
+        /* fermer le pointeur de fichier */ 
+        fclose(fp);
+        
+        
+        unsigned int components  = (fourCC == FOURCC_DXT1) ? 3 : 4; 
+        unsigned int format; 
+        switch(fourCC) 
+        { 
+        case FOURCC_DXT1: 
+            format = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT; 
+            break; 
+        case FOURCC_DXT3: 
+            format = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT; 
+            break; 
+        case FOURCC_DXT5: 
+            format = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT; 
+            break; 
+        default: 
+            free(buffer); 
+            throw core::Error(std::string("unsupported dds format"));
+        }
+        
+        // Crée une texture OpenGL
+        GLuint textureID; 
+        glGenTextures(1, &textureID); 
+    
+        // "Lie" la nouvelle texture : tous les futurs appels aux fonctions de texture vont modifier cette texture
+        glBindTexture(GL_TEXTURE_2D, textureID);
+        
+            unsigned int blockSize = (format == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT) ? 8 : 16; 
+        unsigned int offset = 0; 
+    
+        /* charge les MIP maps */ 
+        for (unsigned int level = 0; level < mipMapCount && (width || height); ++level) 
+        { 
+            unsigned int size = ((width+3)/4)*((height+3)/4)*blockSize; 
+            glCompressedTexImage2D(GL_TEXTURE_2D, level, format, width, height, 
+                0, size, buffer + offset); 
+    
+            offset += size; 
+            width  /= 2; 
+            height /= 2; 
+        } 
+        free(buffer); 
+    
+        t->id = textureID;
+    }
+    
+    void destroyTexture (Texture* t){
+        
+    }
+    
+    void setTexture     (Texture* t){
+        
     }
 }
