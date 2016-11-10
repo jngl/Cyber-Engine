@@ -123,7 +123,7 @@ namespace Renderer
         //index
         glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,mesh->id[3]));
         glCheck(glDrawElements(GL_TRIANGLES,
-                       mesh->nbFaces,
+                       mesh->nbFaces*3,
                        GL_UNSIGNED_INT,
                        (void *)0));          
     

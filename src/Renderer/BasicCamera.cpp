@@ -12,9 +12,9 @@ void updateBasicCamera(BasicCamera& camera){
     const float speed = 0.0001f;
     
     if(System::keyIsPressed(System::Key::KEY_z)){
-        camera.dist -= speed;
+        camera.dist -= speed*camera.dist;
     }else if(System::keyIsPressed(System::Key::KEY_s)){
-        camera.dist += speed;
+        camera.dist += speed*camera.dist;
     }else if(System::keyIsPressed(System::Key::KEY_RIGHT)){
         camera.angle.x += speed;
     }else if(System::keyIsPressed(System::Key::KEY_LEFT)){

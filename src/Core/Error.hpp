@@ -23,7 +23,7 @@ namespace core
 
 
 #define coreAssert(cond) if(cond){throw core::Error("assert error line "+std::to_string(__LINE__)+" in file "+__FILE__);}
-#define coreCheckParam(cond)  if(cond){throw core::Error("wrong parameter line"+std::to_string(__LINE__)+" in file "+__FILE__);}
+#define coreCheckParam(cond)  if(!(cond)){throw core::Error("wrong parameter line"+std::to_string(__LINE__)+" in file "+__FILE__);}
 #define coreCheckPreCond(cond) if(cond){throw core::Error("wrong precondition line"+std::to_string(__LINE__)+" in file "+__FILE__);}
 #define coreCHeckPostCond(cond) if(cond){throw core::Error("wrong postcondition line"+std::to_string(__LINE__)+" in file "+__FILE__);}
 
