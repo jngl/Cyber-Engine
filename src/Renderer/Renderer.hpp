@@ -30,7 +30,7 @@ namespace Renderer
     
     void createTexture  (Texture* t,std::string file);
     void destroyTexture (Texture* t);
-    void setTexture     (Texture* t, Shader* s);
+    void setTexture     (Texture* t, const Shader* s);
     
     //Mesh
     struct Mesh{
@@ -49,7 +49,7 @@ namespace Renderer
     void destroyMesh(Mesh* mesh);
     void drawMesh   (Mesh* mesh, 
                      glm::mat4 mvp,
-                     Shader& shader);
+                     const Shader& shader);
     
     //FrameBuffer
     struct FrameBuffer;

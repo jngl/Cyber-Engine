@@ -7,19 +7,23 @@
 
 #include "Core/Error.hpp"
 
+#include "Renderer/Renderer.hpp"
+
 enum class VoxelType
 {
     AIR,
-    STONE
+    STONE,
+    DIRT,
+    GRASS
 };
 
 template<std::size_t sizeX, std::size_t sizeY, std::size_t sizeZ>
-class VoxelChunk
+class VoxelChunkGrid
 {
 public:
     static const std::size_t SIZE_X = sizeX;
     static const std::size_t SIZE_Y = sizeY;
-   static  const std::size_t SIZE_Z = sizeZ;
+    static  const std::size_t SIZE_Z = sizeZ;
     
     VoxelType& at(std::size_t x, std::size_t y, std::size_t z){
         coreCheckParam(x<sizeX && y<sizeY && z<sizeZ);
@@ -36,21 +40,17 @@ template<class MyVoxelChunk>
 class VoxelChunkMesh
 {
 public:
-    VoxelChunkMesh(MyVoxelChunk& voxels)
+    VoxelChunkMesh(MyVoxelChunk& voxels, VoxelType type)
     {
         for(std::size_t y(0); y<MyVoxelChunk::SIZE_Y; ++y){
             for(std::size_t z(0); z<MyVoxelChunk::SIZE_Z; ++z){
                 for(std::size_t x(0); x<MyVoxelChunk::SIZE_X; ++x){
-                    if(voxels.at(x, y, z)!=VoxelType::AIR){
+                    if(voxels.at(x, y, z)==type){
                         gennerateCube(voxels, x, y, z);
                     }
                 }
             }
         }
-        std::cout<<" "<<vertices.size()<<std::endl;
-        std::cout<<" "<<texCoord.size()<<std::endl;
-        std::cout<<" "<<normals.size()<<std::endl;
-        std::cout<<" "<<faces.size()<<std::endl;
     }
     
     std::size_t getVerticesSize(){
@@ -177,4 +177,88 @@ private:
     std::vector<uint> faces;
 };
 
-
+template<std::size_t sizeX, std::size_t sizeY, std::size_t sizeZ>
+class VoxelChunk
+{
+public:
+    typedef VoxelChunk<sizeX, sizeY, sizeZ> Self;
+    typedef VoxelChunkGrid<sizeX, sizeY, sizeZ> MyGrid;
+    
+    void generateGrid(){
+        for(std::size_t y(0); y<MyGrid::SIZE_Y; ++y){
+            for(std::size_t z(0); z<MyGrid::SIZE_Z; ++z){
+                for(std::size_t x(0); x<MyGrid::SIZE_X; ++x){
+                    if(x+5>y){
+                        if(y==MyGrid::SIZE_Y-1){
+                            mGrid.at(x, y, z) = VoxelType::GRASS;
+                        }else if(y>MyGrid::SIZE_X/2){
+                            mGrid.at(x, y, z) = VoxelType::DIRT;
+                        }else{
+                            mGrid.at(x, y, z) = VoxelType::STONE;
+                        }
+                    }else{
+                        mGrid.at(x, y, z) = VoxelType::AIR;
+                    }
+                }
+            }
+        }
+    }
+    
+    void generateMesh(){
+        VoxelChunkMesh<MyGrid> voxMeshStone(mGrid, VoxelType::STONE);
+        createMesh(&mMeshStone,
+               voxMeshStone.getVerticesSize(),
+               voxMeshStone.getPositions(),
+               voxMeshStone.getTexCoord(),
+               voxMeshStone.getNormal(),
+               voxMeshStone.getIndexSize(),
+               voxMeshStone.getFaces());
+        
+        VoxelChunkMesh<MyGrid> voxMeshDirt(mGrid, VoxelType::DIRT);
+        createMesh(&mMeshDirt,
+               voxMeshDirt.getVerticesSize(),
+               voxMeshDirt.getPositions(),
+               voxMeshDirt.getTexCoord(),
+               voxMeshDirt.getNormal(),
+               voxMeshDirt.getIndexSize(),
+               voxMeshDirt.getFaces());
+        
+        VoxelChunkMesh<MyGrid> voxMeshGrass(mGrid, VoxelType::GRASS);
+        createMesh(&mMeshGrass,
+               voxMeshGrass.getVerticesSize(),
+               voxMeshGrass.getPositions(),
+               voxMeshGrass.getTexCoord(),
+               voxMeshGrass.getNormal(),
+               voxMeshGrass.getIndexSize(),
+               voxMeshGrass.getFaces());
+    }
+    
+    void loadTexture(){
+        Renderer::createTexture(&mTextureStone, "../data/stone.dds");
+        Renderer::createTexture(&mTextureDirt, "../data/dirt.dds");
+        Renderer::createTexture(&mTextureGrass, "../data/grass.dds");
+    }
+    
+    void draw(const glm::mat4& MVP, const Renderer::Shader& shader){
+        Renderer::setTexture(&mTextureStone, &shader);
+        Renderer::drawMesh(&mMeshStone, MVP, shader);
+        Renderer::setTexture(&mTextureDirt, &shader);
+        Renderer::drawMesh(&mMeshDirt, MVP, shader);
+        Renderer::setTexture(&mTextureGrass, &shader);
+        Renderer::drawMesh(&mMeshGrass, MVP, shader);
+    }
+    
+    void unload(){
+        Renderer::destroyMesh(&mMeshStone);
+        Renderer::destroyTexture(&mTextureStone);
+    }
+    
+private:
+    MyGrid mGrid;
+    Renderer::Mesh mMeshStone;
+    Renderer::Mesh mMeshDirt;
+    Renderer::Mesh mMeshGrass;
+    Renderer::Texture mTextureStone;
+    Renderer::Texture mTextureDirt;
+    Renderer::Texture mTextureGrass;
+};

@@ -81,7 +81,7 @@ namespace Renderer
     }
     void drawMesh   (Mesh* mesh, 
                      glm::mat4 mvp,
-                     Shader& shader){
+                     const Shader& shader){
         
         glCheck(glUseProgram(shader.id));
         glCheck(glUniformMatrix4fv(shader.GBuffersMdvMatLoc,1,GL_FALSE,glm::value_ptr(mvp)));
@@ -319,7 +319,7 @@ namespace Renderer
         glDeleteTextures(1, &(t->id));
     }
     
-    void setTexture (Texture* t, Shader* s){
+    void setTexture (Texture* t, const Shader* s){
         // Bind our texture in Texture Unit 0
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, t->id);
