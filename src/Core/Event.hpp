@@ -25,4 +25,3 @@ namespace core
         std::list<Listener> mListeners;
     };
 }
-
