@@ -6,8 +6,6 @@
 #include <iostream>
 
 #include "Core/Error.hpp"
-
-#include "Renderer/GLDebug.hpp"
     
 core::EventManager<System::Key> mKeydown;
 core::EventManager<System::Key> mKeyup;
@@ -69,8 +67,6 @@ namespace System
 #endif
 
         std::cout<<"OpenGL "<<GLVersion.major<<"."<<GLVersion.minor<<", GLSL "<<glGetString(GL_SHADING_LANGUAGE_VERSION)<<std::endl;
-        
-        glCheckError(__FILE__, __LINE__);
 
 
     }

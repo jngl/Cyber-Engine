@@ -5,7 +5,7 @@
 
 #include "Voxel.hpp"
 
-#include "Renderer/Renderer.hpp"
+#include "PlatformIndependenceLayer/GraphicsWrapper.hpp"
 #include "Renderer/BasicCamera.hpp"
 #include "Renderer/CubeData.hpp"
 
@@ -18,7 +18,7 @@ using namespace std;
 #include <glm/gtc/matrix_transform.hpp>
 
 void boxel(){ 
-    Renderer::createRenderer();
+    GraphicsWrapper::constructGraphicsWrapper();
     
     BasicCamera cam;
     cam.dist=20.f;
@@ -29,8 +29,8 @@ void boxel(){
     chunk.loadTexture();
     
     
-    Renderer::Shader shader;
-    Renderer::createShader(shader,
+    GraphicsWrapper::Shader shader;
+    GraphicsWrapper::createShader(shader,
                  "../data/shaders/basic.vert",
                  "../data/shaders/basic.frag");
     
@@ -52,5 +52,5 @@ void boxel(){
         
         System::endFrame();
     }
-    Renderer::destroyRenderer();
+    GraphicsWrapper::destructGraphicsWrapper();
 }

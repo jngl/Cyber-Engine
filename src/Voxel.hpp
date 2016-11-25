@@ -7,7 +7,7 @@
 
 #include "Core/Error.hpp"
 
-#include "Renderer/Renderer.hpp"
+#include "PlatformIndependenceLayer/GraphicsWrapper.hpp"
 
 enum class VoxelType
 {
@@ -234,31 +234,31 @@ public:
     }
     
     void loadTexture(){
-        Renderer::createTexture(&mTextureStone, "../data/stone.dds");
-        Renderer::createTexture(&mTextureDirt, "../data/dirt.dds");
-        Renderer::createTexture(&mTextureGrass, "../data/grass.dds");
+        GraphicsWrapper::createTexture(&mTextureStone, "../data/stone.dds");
+        GraphicsWrapper::createTexture(&mTextureDirt, "../data/dirt.dds");
+        GraphicsWrapper::createTexture(&mTextureGrass, "../data/grass.dds");
     }
     
-    void draw(const glm::mat4& MVP, const Renderer::Shader& shader){
-        Renderer::setTexture(&mTextureStone, &shader);
-        Renderer::drawMesh(&mMeshStone, MVP, shader);
-        Renderer::setTexture(&mTextureDirt, &shader);
-        Renderer::drawMesh(&mMeshDirt, MVP, shader);
-        Renderer::setTexture(&mTextureGrass, &shader);
-        Renderer::drawMesh(&mMeshGrass, MVP, shader);
+    void draw(const glm::mat4& MVP, const GraphicsWrapper::Shader& shader){
+        GraphicsWrapper::setTexture(&mTextureStone, &shader);
+        GraphicsWrapper::drawMesh(&mMeshStone, MVP, shader);
+        GraphicsWrapper::setTexture(&mTextureDirt, &shader);
+        GraphicsWrapper::drawMesh(&mMeshDirt, MVP, shader);
+        GraphicsWrapper::setTexture(&mTextureGrass, &shader);
+        GraphicsWrapper::drawMesh(&mMeshGrass, MVP, shader);
     }
     
     void unload(){
-        Renderer::destroyMesh(&mMeshStone);
-        Renderer::destroyTexture(&mTextureStone);
+        GraphicsWrapper::destroyMesh(&mMeshStone);
+        GraphicsWrapper::destroyTexture(&mTextureStone);
     }
     
 private:
     MyGrid mGrid;
-    Renderer::Mesh mMeshStone;
-    Renderer::Mesh mMeshDirt;
-    Renderer::Mesh mMeshGrass;
-    Renderer::Texture mTextureStone;
-    Renderer::Texture mTextureDirt;
-    Renderer::Texture mTextureGrass;
+    GraphicsWrapper::Mesh mMeshStone;
+    GraphicsWrapper::Mesh mMeshDirt;
+    GraphicsWrapper::Mesh mMeshGrass;
+    GraphicsWrapper::Texture mTextureStone;
+    GraphicsWrapper::Texture mTextureDirt;
+    GraphicsWrapper::Texture mTextureGrass;
 };

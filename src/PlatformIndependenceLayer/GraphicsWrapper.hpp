@@ -6,13 +6,14 @@
 
 #include <glm/mat4x4.hpp>
 
-namespace Renderer
+
+namespace GraphicsWrapper
 {
-    //render
-    void createRenderer();
-    void destroyRenderer();
+    //module
+    void constructGraphicsWrapper();
+    void destructGraphicsWrapper();
     
-    //Shader
+     //Shader
     struct Shader
     {
         GLuint id;
@@ -50,11 +51,4 @@ namespace Renderer
     void drawMesh   (Mesh* mesh, 
                      glm::mat4 mvp,
                      const Shader& shader);
-    
-    //FrameBuffer
-    struct FrameBuffer;
-    
-    void createFrameBuffer  (FrameBuffer* fb);
-    void destroyFrameBuffer (FrameBuffer* fb);
-    void setFrameBuffer     (FrameBuffer* fb);
 }

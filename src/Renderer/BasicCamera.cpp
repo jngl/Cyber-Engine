@@ -6,8 +6,6 @@
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "Renderer.hpp"
-
 void updateBasicCamera(BasicCamera& camera){
     const float speed = 0.0001f;
     
