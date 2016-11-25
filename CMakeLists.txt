@@ -33,15 +33,22 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -DGL_GLEXT_PROTOTYPES")
 #GLM
 find_package(glm REQUIRED)
 
-#Game
+#Engine
 include_directories(src/)
 
 file(GLOB_RECURSE CyberEngine_source_files src/*)
-add_executable(CyberEngine ${CyberEngine_source_files})
+add_library(CyberEngine ${CyberEngine_source_files})
 TARGET_LINK_LIBRARIES(CyberEngine 
             ${SDL2_LIBRARY}  
             ${SDL2_IMAGE_LIBRARY}
             ${OPENGL_LIBRARIES}
             ${GLEW_LIBRARIES}
             ${CMAKE_DL_LIBS}
+)
+
+#Boxel
+file(GLOB_RECURSE Boxel_source_files Boxel/*)
+add_executable(Boxel ${Boxel_source_files})
+TARGET_LINK_LIBRARIES(Boxel
+            CyberEngine
 )

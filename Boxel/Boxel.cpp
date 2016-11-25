@@ -1,4 +1,5 @@
-#include "Test1.hpp"
+
+#include "Boxel.hpp"
 
 #include "System.hpp"
 
@@ -16,7 +17,7 @@ using namespace std;
 #include <glm/vec3.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-void test1(){ 
+void boxel(){ 
     Renderer::createRenderer();
     
     BasicCamera cam;
