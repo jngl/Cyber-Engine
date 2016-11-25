@@ -263,9 +263,9 @@ namespace System
         KEY_SDLK_SLEEP =    SDLK_SLEEP
     };
     
-    void init(int width, int height);
+    void constructSystem(int width, int height);
     
-    void destroy();
+    void destructSystem();
 
     bool isRunning();
 

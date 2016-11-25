@@ -8,6 +8,7 @@
 #include "PlatformIndependenceLayer/GraphicsWrapper.hpp"
 #include "Renderer/BasicCamera.hpp"
 #include "Renderer/CubeData.hpp"
+#include "Modules.hpp"
 
 #include <iostream>
 #include <cassert>
@@ -18,7 +19,7 @@ using namespace std;
 #include <glm/gtc/matrix_transform.hpp>
 
 void boxel(){ 
-    GraphicsWrapper::constructGraphicsWrapper();
+    Modules::constructAllModules();
     
     BasicCamera cam;
     cam.dist=20.f;
@@ -52,5 +53,5 @@ void boxel(){
         
         System::endFrame();
     }
-    GraphicsWrapper::destructGraphicsWrapper();
+    Modules::destructAllModules();
 }

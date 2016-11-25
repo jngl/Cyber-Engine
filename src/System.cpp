@@ -21,7 +21,7 @@ void pre_gl_call(const char *name, void *funcptr, int len_args, ...) {
 
 namespace System
 {
-    void init(int width, int height){    
+    void constructSystem(int width, int height){    
         //init sdl
         if (SDL_Init(SDL_INIT_VIDEO) != 0){
             throw core::Error(std::string("SDL_Init Error: ")+ SDL_GetError());
@@ -71,7 +71,7 @@ namespace System
 
     }
 
-    void destroy(){
+    void destructSystem(){
         if(mGLContext!=nullptr){
             SDL_GL_DeleteContext(mGLContext);
         }

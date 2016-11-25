@@ -7,11 +7,7 @@
 
 int main(){
      try{
-        System::init(800, 600);
-        
         boxel();
-        
-        System::destroy();
         return 0;
         
     }catch(core::Error& e){
