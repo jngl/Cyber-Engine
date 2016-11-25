@@ -8,7 +8,7 @@
 #include "PlatformIndependenceLayer/GraphicsWrapper.hpp"
 #include "Renderer/BasicCamera.hpp"
 #include "Renderer/CubeData.hpp"
-#include "Modules.hpp"
+#include "Core/Modules.hpp"
 
 #include <iostream>
 #include <cassert>
