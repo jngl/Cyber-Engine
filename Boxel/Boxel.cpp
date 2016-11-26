@@ -6,6 +6,7 @@
 #include "Voxel.hpp"
 
 #include "PlatformIndependenceLayer/GraphicsWrapper.hpp"
+#include "PlatformIndependenceLayer/Timer.hpp"
 #include "Renderer/BasicCamera.hpp"
 #include "Renderer/CubeData.hpp"
 #include "Core/Modules.hpp"
@@ -39,19 +40,25 @@ void boxel(){
     
     glm::mat4 proj = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.f); 
     
+    Timer timer;
+    float frameTime = 0.f;
+    
     while(System::isRunning()){
         System::doEvent();
         System::clear();
      
-        updateBasicCamera(cam);
+        updateBasicCamera(cam, frameTime);
         
-       model = glm::translate(glm::mat4(1.0f), glm::vec3(-5, -5, -5));
+        model = glm::translate(glm::mat4(1.0f), glm::vec3(-5, -5, -5));
         
         glm::mat4 MVP = proj * cam.viewMatrix * model;
         
         chunk.draw(MVP, shader);
         
         System::endFrame();
+        
+        frameTime = timer.timeInSecond();
+        timer.restart();
     }
     Modules::destructAllModules();
 }

@@ -6,8 +6,8 @@
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-void updateBasicCamera(BasicCamera& camera){
-    const float speed = 0.0001f;
+void updateBasicCamera(BasicCamera& camera, float frameTime){
+    const float speed = frameTime;
     
     if(System::keyIsPressed(System::Key::KEY_z)){
         camera.dist -= speed*camera.dist;

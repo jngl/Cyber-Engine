@@ -10,4 +10,4 @@ struct BasicCamera
     glm::mat4 viewMatrix;
 };
 
-void updateBasicCamera(BasicCamera& camera);
+void updateBasicCamera(BasicCamera& camera, float frameTime);
