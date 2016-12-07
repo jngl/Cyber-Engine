@@ -5,7 +5,7 @@
 
 #include "Boxel.hpp"
 
-int main(){
+int SDL_main(int argc, char *argv[]){
      try{
         boxel();
         return 0;

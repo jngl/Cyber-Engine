@@ -17,6 +17,7 @@ namespace core
 
     Error& Error::operator= (const Error& error) throw(){
         mMessage = error.mMessage;
+		return *this;
     }
 
     Error::~Error() throw(){

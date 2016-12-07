@@ -32,6 +32,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -DGL_GLEXT_PROTOTYPES")
 
 #GLM
 find_package(glm REQUIRED)
+include_directories(${GLM_INCLUDE_DIRS})
 
 #Engine
 include_directories(src/)

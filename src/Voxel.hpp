@@ -17,15 +17,15 @@ enum class VoxelType
     GRASS
 };
 
-template<std::size_t sizeX, std::size_t sizeY, std::size_t sizeZ>
+template<unsigned int sizeX, unsigned int sizeY, unsigned int sizeZ>
 class VoxelChunkGrid
 {
 public:
-    static const std::size_t SIZE_X = sizeX;
-    static const std::size_t SIZE_Y = sizeY;
-    static  const std::size_t SIZE_Z = sizeZ;
+    static const unsigned int SIZE_X = sizeX;
+    static const unsigned int SIZE_Y = sizeY;
+    static  const unsigned int SIZE_Z = sizeZ;
     
-    VoxelType& at(std::size_t x, std::size_t y, std::size_t z){
+    VoxelType& at(unsigned int x, unsigned int y, unsigned int z){
         coreCheckParam(x<sizeX && y<sizeY && z<sizeZ);
         
         return voxels[y*sizeX*sizeZ + z*sizeX + x];
@@ -42,9 +42,9 @@ class VoxelChunkMesh
 public:
     VoxelChunkMesh(MyVoxelChunk& voxels, VoxelType type)
     {
-        for(std::size_t y(0); y<MyVoxelChunk::SIZE_Y; ++y){
-            for(std::size_t z(0); z<MyVoxelChunk::SIZE_Z; ++z){
-                for(std::size_t x(0); x<MyVoxelChunk::SIZE_X; ++x){
+        for(unsigned int y(0); y<MyVoxelChunk::SIZE_Y; ++y){
+            for(unsigned int z(0); z<MyVoxelChunk::SIZE_Z; ++z){
+                for(unsigned int x(0); x<MyVoxelChunk::SIZE_X; ++x){
                     if(voxels.at(x, y, z)==type){
                         gennerateCube(voxels, x, y, z);
                     }
@@ -53,8 +53,8 @@ public:
         }
     }
     
-    std::size_t getVerticesSize(){
-        return vertices.size()/3;
+	unsigned int getVerticesSize(){
+        return static_cast<unsigned int>(vertices.size()/3);
     }
     
     float* getPositions(){
@@ -69,21 +69,21 @@ public:
         return &normals[0];
     }
     
-    std::size_t getIndexSize(){
-        return faces.size();
+	unsigned int getIndexSize(){
+        return static_cast<unsigned int>(faces.size());
     }
     
-    uint* getFaces(){
+    unsigned int* getFaces(){
         return &faces[0];
     }
     
 private:
-    void gennerateCube(MyVoxelChunk& voxels, std::size_t x, std::size_t y, std::size_t z){
-        float fx = x;
-        float fy = y;
-        float fz = z;
+    void gennerateCube(MyVoxelChunk& voxels, unsigned int x, unsigned int y, unsigned int z){
+        float fx = static_cast<float>(x);
+        float fy = static_cast<float>(y);
+        float fz = static_cast<float>(z);
         
-        std::size_t vSize;
+		unsigned int vSize;
         
         //up
         if( y+1==MyVoxelChunk::SIZE_Y || voxels.at(x,y+1,z)==VoxelType::AIR ){
@@ -91,7 +91,7 @@ private:
             addVertex(fx+1.f, fy+1.f, fz,       1, 0,       0.f, 1.f, 0.f);
             addVertex(fx+1.f, fy+1.f, fz+1.f,   1, 1,       0.f, 1.f, 0.f);
             addVertex(fx,     fy+1.f, fz+1.f,   0, 1,       0.f, 1.f, 0.f);
-            vSize = vertices.size()/3;
+            vSize = static_cast<unsigned int>(vertices.size()/3);
             addFace(vSize-4, vSize-3, vSize-2, vSize-1);
         }
        
@@ -101,7 +101,7 @@ private:
             addVertex(fx+1.f, fy, fz,       1, 0,       0.f, -1.f, 0.f);
             addVertex(fx+1.f, fy, fz+1.f,   1, 1,       0.f, -1.f, 0.f);
             addVertex(fx,     fy, fz+1.f,   0, 1,       0.f, -1.f, 0.f);
-            vSize = vertices.size()/3;
+            vSize = static_cast<unsigned int>(vertices.size()/3);
             addFace(vSize-4, vSize-3, vSize-2, vSize-1);
         }
         
@@ -111,7 +111,7 @@ private:
             addVertex(fx+1.f, fy+1.f, fz,       1, 0,       1.f, 0.f, 0.f);
             addVertex(fx+1.f, fy+1.f, fz+1.f,   1, 1,       1.f, 0.f, 0.f);
             addVertex(fx+1.f, fy,     fz+1.f,   0, 1,       1.f, 0.f, 0.f);
-            vSize = vertices.size()/3;
+            vSize = static_cast<unsigned int>(vertices.size()/3);
             addFace(vSize-4, vSize-3, vSize-2, vSize-1);
         }
         
@@ -121,7 +121,7 @@ private:
             addVertex(fx, fy+1.f, fz,       1, 0,       -1.f, 0.f, 0.f);
             addVertex(fx, fy+1.f, fz+1.f,   1, 1,       -1.f, 0.f, 0.f);
             addVertex(fx, fy,     fz+1.f,   0, 1,       -1.f, 0.f, 0.f);
-            vSize = vertices.size()/3;
+            vSize = static_cast<unsigned int>(vertices.size()/3);
             addFace(vSize-4, vSize-3, vSize-2, vSize-1);
         }
         
@@ -131,7 +131,7 @@ private:
             addVertex(fx+1.f, fy,     fz+1.f,       1, 0,       0.f, 0.f, 1.f);
             addVertex(fx+1.f, fy+1.f, fz+1.f,       1, 1,       0.f, 0.f, 1.f);
             addVertex(fx,     fy+1.f, fz+1.f,       0, 1,       0.f, 0.f, 1.f);
-            vSize = vertices.size()/3;
+            vSize = static_cast<unsigned int>(vertices.size()/3);
             addFace(vSize-4, vSize-3, vSize-2, vSize-1);
         }
         
@@ -142,7 +142,7 @@ private:
             addVertex(fx+1.f, fy,     fz,       1, 0,       0.f, 0.f, -1.f);
             addVertex(fx+1.f, fy+1.f, fz,       1, 1,       0.f, 0.f, -1.f);
             addVertex(fx,     fy+1.f, fz,       0, 1,       0.f, 0.f, -1.f);
-            vSize = vertices.size()/3;
+            vSize = static_cast<unsigned int>(vertices.size()/3);
             addFace(vSize-4, vSize-3, vSize-2, vSize-1);
         }
         
@@ -161,7 +161,7 @@ private:
         normals.push_back(normZ);
     }
     
-    void addFace(uint v1, uint v2, uint v3, uint v4){
+    void addFace(unsigned int v1, unsigned int v2, unsigned int v3, unsigned int v4){
         faces.push_back(v1);
         faces.push_back(v2);
         faces.push_back(v3);
@@ -174,10 +174,10 @@ private:
     std::vector<float> vertices;
     std::vector<float> texCoord;
     std::vector<float> normals;
-    std::vector<uint> faces;
+    std::vector<unsigned int> faces;
 };
 
-template<std::size_t sizeX, std::size_t sizeY, std::size_t sizeZ>
+template<unsigned int sizeX, unsigned int sizeY, unsigned int sizeZ>
 class VoxelChunk
 {
 public:
@@ -185,9 +185,9 @@ public:
     typedef VoxelChunkGrid<sizeX, sizeY, sizeZ> MyGrid;
     
     void generateGrid(){
-        for(std::size_t y(0); y<MyGrid::SIZE_Y; ++y){
-            for(std::size_t z(0); z<MyGrid::SIZE_Z; ++z){
-                for(std::size_t x(0); x<MyGrid::SIZE_X; ++x){
+        for(unsigned int y(0); y<MyGrid::SIZE_Y; ++y){
+            for(unsigned int z(0); z<MyGrid::SIZE_Z; ++z){
+                for(unsigned int x(0); x<MyGrid::SIZE_X; ++x){
                     if(x+5>y){
                         if(y==MyGrid::SIZE_Y-1){
                             mGrid.at(x, y, z) = VoxelType::GRASS;

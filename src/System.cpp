@@ -120,7 +120,7 @@ namespace System
     
     bool keyIsPressed(Key k){
         const Uint8 *state = SDL_GetKeyboardState(NULL);
-        return state[SDL_GetScancodeFromKey((SDL_Keycode)k)];
+        return state[SDL_GetScancodeFromKey((SDL_Keycode)k)]!=0;
     }
 
     void close(){

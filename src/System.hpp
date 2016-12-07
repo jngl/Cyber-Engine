@@ -147,7 +147,6 @@ namespace System
         KEY_F22 =           SDLK_F22,
         KEY_F23 =           SDLK_F23,
         KEY_F24 =           SDLK_F24,
-        KEY_EXECUTE =       SDLK_EXECUTE,
         KEY_HELP =          SDLK_HELP,
         KEY_MENU =          SDLK_MENU,
         KEY_SELECT =        SDLK_SELECT,

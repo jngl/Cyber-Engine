@@ -13,7 +13,7 @@ public:
     
 private:
     typedef std::chrono::high_resolution_clock::time_point TimePoint;
-    typedef std::chrono::duration<double> Duration;
+    typedef std::chrono::duration<float> Duration;
     
     TimePoint mTimeStart;
     
