@@ -3,15 +3,14 @@
 
 #include <iostream>
 
-#include <SDL.h>
+#include <SDL_main.h>
 
 #include "Boxel.hpp"
 
-#if defined(SDL_MAIN_NEEDED) || defined(SDL_MAIN_AVAILABLE)
-int SDL_main(int argc, char *argv[]){
-#else
-int main(){
+#ifdef __cplusplus
+extern "C"
 #endif
+int main(int argc, char *argv[]){
      try{
         boxel();
         return 0;
