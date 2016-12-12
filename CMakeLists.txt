@@ -53,3 +53,10 @@ add_executable(Boxel ${Boxel_source_files})
 TARGET_LINK_LIBRARIES(Boxel
             CyberEngine
 )
+
+#Match
+file(GLOB_RECURSE Match_source_files Match/*)
+add_executable(Match ${Match_source_files})
+TARGET_LINK_LIBRARIES(Match
+            CyberEngine
+)

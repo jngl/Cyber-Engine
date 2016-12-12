@@ -144,7 +144,7 @@ namespace GraphicsWrapper
         glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,
                      mesh->id[3])); 
         glCheck(glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-                     sizeof(unsigned int) * nbFaces,
+                     sizeof(unsigned int) * nbFaces * 3,
                      faces,
                      GL_STATIC_DRAW));
         
@@ -293,7 +293,7 @@ namespace GraphicsWrapper
         glCheck(shader.texture  = glGetUniformLocation(shader.id, "textureSampler"));
     }
     
-    void destroyShade(Shader& shader){
+    void destroyShader(Shader& shader){
         if(glIsProgram(shader.id)) {
             glDeleteProgram(shader.id);
         }

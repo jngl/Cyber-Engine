@@ -211,7 +211,7 @@ public:
                voxMeshStone.getPositions(),
                voxMeshStone.getTexCoord(),
                voxMeshStone.getNormal(),
-               voxMeshStone.getIndexSize(),
+               voxMeshStone.getIndexSize()/3,
                voxMeshStone.getFaces());
         
         VoxelChunkMesh<MyGrid> voxMeshDirt(mGrid, VoxelType::DIRT);
@@ -220,7 +220,7 @@ public:
                voxMeshDirt.getPositions(),
                voxMeshDirt.getTexCoord(),
                voxMeshDirt.getNormal(),
-               voxMeshDirt.getIndexSize(),
+               voxMeshDirt.getIndexSize()/3,
                voxMeshDirt.getFaces());
         
         VoxelChunkMesh<MyGrid> voxMeshGrass(mGrid, VoxelType::GRASS);
@@ -229,7 +229,7 @@ public:
                voxMeshGrass.getPositions(),
                voxMeshGrass.getTexCoord(),
                voxMeshGrass.getNormal(),
-               voxMeshGrass.getIndexSize(),
+               voxMeshGrass.getIndexSize()/3,
                voxMeshGrass.getFaces());
     }
     
