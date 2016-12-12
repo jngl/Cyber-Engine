@@ -60,3 +60,10 @@ add_executable(Match ${Match_source_files})
 TARGET_LINK_LIBRARIES(Match
             CyberEngine
 )
+
+#Voxel
+file(GLOB_RECURSE Voxel_source_files Voxel/*)
+add_executable(Voxel ${Voxel_source_files})
+TARGET_LINK_LIBRARIES(Voxel
+            CyberEngine
+)
