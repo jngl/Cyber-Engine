@@ -9,24 +9,44 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <iostream>
+#include <vector>
 
 #include <SDL_main.h>
 
-template<class GridElement>
-class Grid
+template<class T>
+class Vector2D
 {
 public:
-    Grid(unsigned int sizeX, unsigned int sizeY);
-    ~Grid();
-    
-    void move();
-    
-    void inIndex();
-    void toIndex();
-    void fromIndex();
-    
+	Vector2D() :
+		mSizeX(0),
+		mSizeY(0)
+	{
+
+	}
+
+	std::size_t sizeX() {
+		return mSizeX;
+	}
+	std::size_t sizeY() {
+		return mSizeY;
+	}
+
+	void create(std::size_t x, std::size_t y) {
+		mData.resize(x*y);
+	}
+
+	void destroy() {
+		mData.resize(0);
+	}
+
+	T& at(std::size_t x, std::size_t y) {
+		return mData.at(y*mSizeX + x);
+	}
+
 private:
-    
+	std::vector<T> mData;
+	std::size_t mSizeX;
+	std::size_t mSizeY;
 };
 
 unsigned int nbVertices = 4;
@@ -47,6 +67,17 @@ const float normals[] = {0.f, 0.f, -1.f,
 };
 unsigned int nbFaces = 2;
 const unsigned int faces[] = { 2, 1, 0,  2, 0, 3};
+
+enum class Piece
+{
+	PLAYER,
+	FIRE,
+	WATER,
+	DIRT,
+	AIR,
+	DARK,
+	LIGHT,
+};
 
 extern "C"
 int main(int argc, char *argv[]){
@@ -70,6 +101,7 @@ int main(int argc, char *argv[]){
         
         GraphicsWrapper::Texture tex;
         GraphicsWrapper::createTexture(&tex, "../data/stone.dds");
+
         GraphicsWrapper::setTexture(&tex, &shader);
         
         glm::mat4 model(1.0f);
@@ -79,6 +111,9 @@ int main(int argc, char *argv[]){
         glm::mat4 proj = glm::ortho(-0.5f, 0.5f,
                                                         -0.5f, 0.5f,
                                                         -100.f, 100.f);
+
+		Vector2D<Piece> board;
+
         
         while(System::isRunning()){
             System::doEvent();
