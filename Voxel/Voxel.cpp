@@ -1,45 +1,32 @@
 #include <iostream>
+#include <vector>
+#include <fstream>
 
 #define GLM_FORCE_SWIZZLE
 #include <glm/glm.hpp>
 
-#define RENDER_DIST 400
+
+#include "PlatformIndependenceLayer/Timer.hpp"
+
+#include "Image.hpp"
+#include "Noise.cpp"
+
+#define RENDER_DIST 50
 #define SPEED 20.0f
 #define CAM_DIST 70.0f
 
 //montaigne scale
-#define HEIGHT 200.0f
-#define WIDTH 0.3f
+#define HEIGHT 20.0f
+#define WIDTH 0.9f
 
-float randFloatFromVec2(glm::vec2 n)
-{
-  return 0.5f + 0.5f * glm::fract(sin(glm::dot(n, glm::vec2(12.9898f, 78.233f)))* 43758.5453f);
-}
+Image result(150, 100);
+Image heightMap(500, 500);
+Image texture(500, 500);
 
-float interpolation(float a, float b, float alpha){
-	return glm::mix(a, b, 0.5f-cos(alpha*3.14f)/2.0f);
-}
-
-float noise(glm::vec2 p, glm::vec2 size){
-	
-	
-	float h11=randFloatFromVec2(glm::vec2(floor(p.x/size.x), floor(p.y/size.y)));
-	float h12=randFloatFromVec2(glm::vec2(floor(p.x/size.x), floor(p.y/size.y+1.0)));
-	float h21=randFloatFromVec2(glm::vec2(floor(p.x/size.x+1.0), floor(p.y/size.y)));
-	float h22=randFloatFromVec2(glm::vec2(floor(p.x/size.x+1.0), floor(p.y/size.y+1.0)));
-	
-	float px=glm::fract(p.x/size.x);
-	float py=glm::fract(p.y/size.y);
-	
-	return interpolation(interpolation(h11, h21, px), interpolation(h12, h22, px), py);
-}
+const glm::vec3 camUp=glm::vec3(0.0f, 1.0f, 0.0f);
 
 float perlinnoise(glm::vec2 p){
-	return ( noise(p*WIDTH, glm::vec2(8.0f)) * 0.25f+noise(p*WIDTH, glm::vec2(32.0f)) )*HEIGHT;	
-}
-
-float mymod(float value, float modulus) {
-  return glm::mod((glm::mod(value, modulus) + modulus), modulus);
+	return ( noise(p*WIDTH, glm::vec2(8.0f)) * 0.25f+0.75f*noise(p*WIDTH, glm::vec2(32.0f)) )*HEIGHT;	
 }
 
 float intbound(float s, float ds) {
@@ -55,6 +42,11 @@ float intbound(float s, float ds) {
 
 glm::vec3 intbound(glm::vec3 s, glm::vec3 ds){
 	return glm::vec3(intbound(s.x, ds.x), intbound(s.y, ds.y), intbound(s.z, ds.z));	
+}
+
+bool isBlock(glm::vec3 pos){
+    float h = heightMap.getPixelRef(glm::mod(pos.x, 500.f), glm::mod(pos.z, 500.f)).x;
+    return pos.y<h;
 }
 
 
@@ -85,19 +77,10 @@ glm::vec4 raycast(glm::vec3 camPos, glm::vec3 rayDir, glm::vec3& normal){
 	return glm::vec4(voxelPos, -1.0);
 }
 
-void mainImage( glm::vec4& fragColor, glm::vec2 fragCoord, glm::vec2 iResolution, float iGlobalTime)
+void mainImage( glm::vec3& fragColor, glm::vec2 fragCoord, glm::vec2 iResolution, float iGlobalTime, glm::vec3& camPos, glm::vec3& camView)
 {
 	//pixel coord (-1, 1)
 	glm::vec2 uv = (fragCoord / iResolution)*2.0f-1.0f;
-	
-	//camera
-	glm::vec3 camPos=glm::vec3(CAM_DIST-iGlobalTime*SPEED, HEIGHT*1.4f, 150.0f);
-	camPos.y=perlinnoise(camPos.xz())+CAM_DIST*0.25f;
-	
-	glm::vec3 camView=glm::vec3(-iGlobalTime*SPEED, 0.0f, 50.0f);
-	camView.y=perlinnoise(camView.xz());
-
-	glm::vec3 camUp=glm::vec3(0.0f, 1.0f, 0.0f);
 	
 	//ray dir
 	glm::vec3 camDir=glm::normalize(camView-camPos);
@@ -115,43 +98,57 @@ void mainImage( glm::vec4& fragColor, glm::vec2 fragCoord, glm::vec2 iResolution
 	
 	//color
 	glm::vec3 light=glm::vec3(0.0f, 1.0f, 0.0f);
-	glm::vec3 color=glm::vec3(0.3f, 0.3f, 1.0f);
-	float diff=1.0f;
+	fragColor=glm::vec3(0.3f, 0.3f, 1.0f);
 	
 	if(sky>0.0f){
-		color=glm::vec3(p.y/HEIGHT, p.x/150.0f+0.5f, p.z/150.0f+0.5f);
-		//color=texture2D(iChannel0, p.xz/150.0).xyz;
-		diff=glm::max(glm::dot(light, normal), 0.0f);
+		fragColor=glm::vec3(p.y/HEIGHT, p.x/150.0f+0.5f, p.z/150.0f+0.5f);
+        //fragColor = texture.getPixelRef(glm::mod(p.x, 500.f), glm::mod(p.z, 500.f));
+		float diff=glm::max(glm::dot(light, normal), 0.0f);
 		diff=diff*0.3f+0.7f;
+        fragColor*=diff;
 	}
-	
-	//fin
-	fragColor = glm::vec4(color*diff,1.0f);
+	fragColor*=255;
 }
 
 int main(){
-    glm::vec4 fragColor;
-    glm::vec2 fragCoord;
-    glm::vec2 iResolution(60.f, 40.f);
-    float iGlobalTime(0.f);
     
-    std::cout<<"P3"<<std::endl;
-    std::cout<<glm::floor(iResolution.x)<<" "<<glm::floor(iResolution.y)<<std::endl;
-    std::cout<<"255"<<std::endl;
-    
-    for(int y(iResolution.y-1); y>=0; --y){
-        for(int x(0); x<iResolution.x; ++x){
-            fragCoord = glm::vec2(x, y);
-            mainImage(fragColor, fragCoord, iResolution, iGlobalTime);
-            fragColor = glm::max(glm::vec4(0.f), fragColor*255.f);
-            std::cout<<glm::floor(fragColor.x)<<" "<<glm::floor(fragColor.y)<<" "<<glm::floor(fragColor.z)<<" ";
-            
+    //gen HeightMap
+    for(int y(0); y<heightMap.getHeight(); ++y){
+        for(int x(0); x<heightMap.getWidth(); ++x){
+            float h = perlinnoise(glm::vec2(x, y));
+            heightMap.getPixelRef(x, y)=glm::vec3(h);
+           if(h<HEIGHT/2.f){
+                texture.getPixelRef(x, y)=glm::mix(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 0.f, 255.f), h/(HEIGHT/2.f));
+            }else{
+                texture.getPixelRef(x, y)=glm::mix(glm::vec3(0.f, 255.f, 0.f), glm::vec3(255.f), (h-HEIGHT/2.f)/(HEIGHT/2.f));
+            }
         }
-        std::cout<<std::endl;
-        std::cerr<<"\r"<<y<<std::endl;
     }
     
-    return 0;
+    glm::vec3 fragColor;
+    glm::vec2 fragCoord;
+    glm::vec2 iResolution(result.getWidth(), result.getHeight());
+    float iGlobalTime(0.f);
+    
+    //camera
+	glm::vec3 camPos=glm::vec3(-HEIGHT, 10, -HEIGHT);
+    
+    glm::vec3 camView=glm::vec3(0.f, 0.0f, 0.0f);
+    
+    Timer timer;
+    
+    for(int y(result.getHeight()-1); y>=0; --y){
+        for(int x(0); x<result.getWidth(); ++x){
+             fragCoord = glm::vec2(x, y);
+            mainImage(result.getPixelRef(x, y), fragCoord, iResolution, iGlobalTime, camPos, camView);
+        }
+    }
+    
+    std::cout<<"\rtime : "<<timer.timeInSecond()<<std::endl;
+    
+    heightMap.save("hm.ppm");
+    texture.save("tex.ppm");
+    result.save("result.ppm");
 }
 
 
