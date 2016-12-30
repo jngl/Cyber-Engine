@@ -102,6 +102,69 @@ namespace GraphicsWrapper
     void destructGraphicsWrapper(){
     }
     
+    //Buffer
+    void createBuffer(Buffer* buffer, BufferType type, BufferDataType dataType, int size, int nbBlock, const void* data){
+        buffer->size = size;
+        buffer->nbBlock = nbBlock;
+        
+        if(type == BufferType::VERTEX_ATTRIBUTE){
+            buffer->target = GL_ARRAY_BUFFER;
+        }else{
+            buffer->target = GL_ELEMENT_ARRAY_BUFFER;
+        }
+        
+        int typeSize;
+        if(dataType == BufferDataType::FLOAT){
+            typeSize = sizeof(float);
+            buffer->typeGL = GL_FLOAT;
+        }else{
+            typeSize = sizeof(unsigned int);
+            buffer->typeGL = GL_UNSIGNED_INT;
+        }
+        
+        glCheck(glGenBuffers(1, &buffer->id));
+        glCheck(glBindBuffer(buffer->target,
+                    buffer->id)); 
+        glCheck(glBufferData(buffer->target,
+                     typeSize*size*nbBlock,
+                     data,
+                     GL_STATIC_DRAW));
+    }
+    
+    void destroyBuffer(Buffer* buffer){
+        glCheck(glDeleteBuffers(1, &buffer->id));
+    }
+    
+    void drawBuffer( std::initializer_list<Buffer*> list ){
+        int i(0);
+        for( auto elem : list )
+        {
+            if(elem->target==GL_ARRAY_BUFFER){
+                glCheck(glEnableVertexAttribArray(i));
+                glCheck(glBindBuffer(GL_ARRAY_BUFFER, elem->id));
+                glCheck(glVertexAttribPointer(
+                    i,                  // attribute
+                    elem->size,                  // size
+                    elem->typeGL,           // type
+                    GL_FALSE,           // normalized?
+                    0,                  // stride
+                    (void*)0            // array buffer offset
+                ));
+            }else{
+                glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,elem->id));
+                glCheck(glDrawElements(GL_TRIANGLES,
+                            elem->nbBlock*3,
+                            elem->typeGL,
+                            (void *)0));          
+            
+                for(int j(i-1); j>=0; --j){
+                    glCheck(glDisableVertexAttribArray(j));
+                }
+            }
+            ++i;
+        }
+    }
+    
     //Mesh
     void createMesh (Mesh* mesh,
                      unsigned int nbVertices,
@@ -112,45 +175,18 @@ namespace GraphicsWrapper
                      const unsigned int* faces
                     )
     {
-        glCheck(glGenBuffers(4, mesh->id));
-        
         mesh->nbFaces = nbFaces;
         
-        // vertices
-        glCheck(glBindBuffer(GL_ARRAY_BUFFER,
-                     mesh->id[0])); 
-        glCheck(glBufferData(GL_ARRAY_BUFFER,
-                     sizeof(float)*3*nbVertices,
-                     vertices,
-                     GL_STATIC_DRAW));
-        
-        //texCoord
-        glCheck(glBindBuffer(GL_ARRAY_BUFFER,
-                     mesh->id[1])); 
-        glCheck(glBufferData(GL_ARRAY_BUFFER,
-                     sizeof(float)*2*nbVertices,
-                     texCoord,
-                     GL_STATIC_DRAW));
-        
-        //normal
-        glCheck(glBindBuffer(GL_ARRAY_BUFFER,
-                     mesh->id[2])); 
-        glCheck(glBufferData(GL_ARRAY_BUFFER,
-                     sizeof(float)*3*nbVertices,
-                     normals,
-                     GL_STATIC_DRAW));
-  
-        // indices
-        glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,
-                     mesh->id[3])); 
-        glCheck(glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-                     sizeof(unsigned int) * nbFaces * 3,
-                     faces,
-                     GL_STATIC_DRAW));
-        
+        createBuffer(&mesh->buffer[0], BufferType::VERTEX_ATTRIBUTE, BufferDataType::FLOAT, 3, nbVertices, vertices);
+        createBuffer(&mesh->buffer[1], BufferType::VERTEX_ATTRIBUTE, BufferDataType::FLOAT, 2, nbVertices, texCoord);
+        createBuffer(&mesh->buffer[2], BufferType::VERTEX_ATTRIBUTE, BufferDataType::FLOAT, 3, nbVertices, normals);
+        createBuffer(&mesh->buffer[3], BufferType::VERTEX_ARRAY_INDICES, BufferDataType::UNSIGNED_INT, 3, nbFaces, faces);        
     }
     void destroyMesh(Mesh* mesh){ 
-        glCheck(glDeleteBuffers(2,mesh->id));
+        destroyBuffer(&mesh->buffer[0]);
+        destroyBuffer(&mesh->buffer[1]);
+        destroyBuffer(&mesh->buffer[2]);
+        destroyBuffer(&mesh->buffer[3]);
     }
     void drawMesh   (Mesh* mesh, 
                      glm::mat4 mvp,
@@ -159,50 +195,7 @@ namespace GraphicsWrapper
         glCheck(glUseProgram(shader.id));
         glCheck(glUniformMatrix4fv(shader.GBuffersMdvMatLoc,1,GL_FALSE,glm::value_ptr(mvp)));
         
-        //vertex
-        glCheck(glEnableVertexAttribArray(0));
-		glCheck(glBindBuffer(GL_ARRAY_BUFFER, mesh->id[0]));
-		glCheck(glVertexAttribPointer(
-			0,                  // attribute
-			3,                  // size
-			GL_FLOAT,           // type
-			GL_FALSE,           // normalized?
-			0,                  // stride
-			(void*)0            // array buffer offset
-		));
-        
-        //texCoord
-        glCheck(glEnableVertexAttribArray(1));
-        glCheck(glBindBuffer(GL_ARRAY_BUFFER,mesh->id[1]));
-        glCheck(glVertexAttribPointer(
-                              1,
-                              2,
-                              GL_FLOAT,
-                              GL_FALSE,
-                              0,
-                              (void *)0));
-        
-        //normal
-        glCheck(glEnableVertexAttribArray(2));
-        glCheck(glBindBuffer(GL_ARRAY_BUFFER,mesh->id[2]));
-        glCheck(glVertexAttribPointer(
-                              2,
-                              3,
-                              GL_FLOAT,
-                              GL_FALSE,
-                              0,
-                              (void *)0));
-
-        //index
-        glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,mesh->id[3]));
-        glCheck(glDrawElements(GL_TRIANGLES,
-                       mesh->nbFaces*3,
-                       GL_UNSIGNED_INT,
-                       (void *)0));          
-    
-        glCheck(glDisableVertexAttribArray(0));
-		glCheck(glDisableVertexAttribArray(1));
-		glCheck(glDisableVertexAttribArray(2));
+        drawBuffer({&mesh->buffer[0], &mesh->buffer[1], &mesh->buffer[2], &mesh->buffer[3]});
     }
     
     //shader

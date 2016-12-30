@@ -33,9 +33,33 @@ namespace GraphicsWrapper
     void destroyTexture (Texture* t);
     void setTexture     (Texture* t, const Shader* s);
     
+    //Buffer
+    enum class BufferDataType{
+        FLOAT,
+        UNSIGNED_INT
+    };
+    
+    enum class BufferType{
+        VERTEX_ATTRIBUTE,
+        VERTEX_ARRAY_INDICES
+    };
+    
+    struct Buffer{
+        GLuint id;
+        GLint size;
+        GLint nbBlock;
+        GLenum target;
+        GLenum typeGL;
+    };
+    
+    void createBuffer(Buffer* buffer, BufferType type, BufferDataType dataType, int size, int nbBlock, const void* data);
+    void destroyBuffer(Buffer* buffer);
+    
+    void drawBuffer( std::initializer_list<Buffer*> list );
+    
     //Mesh
     struct Mesh{
-        GLuint id[4];
+        Buffer buffer[4];
         unsigned int nbFaces;
     };
     
