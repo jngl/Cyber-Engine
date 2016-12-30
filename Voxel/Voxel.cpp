@@ -9,7 +9,7 @@
 #include "PlatformIndependenceLayer/Timer.hpp"
 
 #include "Image.hpp"
-#include "Noise.cpp"
+#include "Noise.hpp"
 
 #define RENDER_DIST 50
 #define SPEED 20.0f

@@ -7,7 +7,7 @@
 
 #include "Core/Error.hpp"
 
-#include "PlatformIndependenceLayer/GraphicsWrapper.hpp"
+#include "Renderer/Renderer.hpp"
 
 enum class VoxelType
 {
@@ -206,59 +206,93 @@ public:
     
     void generateMesh(){
         VoxelChunkMesh<MyGrid> voxMeshStone(mGrid, VoxelType::STONE);
-        createMesh(&mMeshStone,
-               voxMeshStone.getVerticesSize(),
+        mModelStone = Renderer::createModel(
+              voxMeshStone.getVerticesSize(),
                voxMeshStone.getPositions(),
                voxMeshStone.getTexCoord(),
                voxMeshStone.getNormal(),
                voxMeshStone.getIndexSize()/3,
-               voxMeshStone.getFaces());
+               voxMeshStone.getFaces(),
+               mMaterialStone
+                                           );
         
         VoxelChunkMesh<MyGrid> voxMeshDirt(mGrid, VoxelType::DIRT);
-        createMesh(&mMeshDirt,
+        mModelDirt = Renderer::createModel(
                voxMeshDirt.getVerticesSize(),
                voxMeshDirt.getPositions(),
                voxMeshDirt.getTexCoord(),
                voxMeshDirt.getNormal(),
                voxMeshDirt.getIndexSize()/3,
-               voxMeshDirt.getFaces());
+               voxMeshDirt.getFaces(),
+               mMaterialDirt
+                                          );
         
         VoxelChunkMesh<MyGrid> voxMeshGrass(mGrid, VoxelType::GRASS);
-        createMesh(&mMeshGrass,
+        mModelGrass = Renderer::createModel(
                voxMeshGrass.getVerticesSize(),
                voxMeshGrass.getPositions(),
                voxMeshGrass.getTexCoord(),
                voxMeshGrass.getNormal(),
                voxMeshGrass.getIndexSize()/3,
-               voxMeshGrass.getFaces());
+               voxMeshGrass.getFaces(),
+               mMaterialGrass
+                                           );
+        
+        mObjectStone = Renderer::createObject(mModelStone);
+        mObjectDirt = Renderer::createObject(mModelDirt);
+        mObjectGrass = Renderer::createObject(mModelGrass);
     }
     
     void loadTexture(){
-        GraphicsWrapper::createTexture(&mTextureStone, "../data/stone.dds");
-        GraphicsWrapper::createTexture(&mTextureDirt, "../data/dirt.dds");
-        GraphicsWrapper::createTexture(&mTextureGrass, "../data/grass.dds");
+        mTextureStone  = Renderer::createTexture("../data/stone.dds");
+        mTextureDirt  = Renderer::createTexture("../data/dirt.dds");
+        mTextureGrass = Renderer::createTexture( "../data/grass.dds");
+        
+        mMaterialStone = Renderer::createMaterial(mTextureStone);
+        mMaterialDirt = Renderer::createMaterial(mTextureDirt);
+        mMaterialGrass = Renderer::createMaterial(mTextureGrass);
     }
     
-    void draw(const glm::mat4& MVP, const GraphicsWrapper::Shader& shader){
-        GraphicsWrapper::setTexture(&mTextureStone, &shader);
-        GraphicsWrapper::drawMesh(&mMeshStone, MVP, shader);
-        GraphicsWrapper::setTexture(&mTextureDirt, &shader);
-        GraphicsWrapper::drawMesh(&mMeshDirt, MVP, shader);
-        GraphicsWrapper::setTexture(&mTextureGrass, &shader);
-        GraphicsWrapper::drawMesh(&mMeshGrass, MVP, shader);
+    void draw(){
+        Renderer::renderObject(mObjectStone);
+        Renderer::renderObject(mObjectDirt);
+        Renderer::renderObject(mObjectGrass);
     }
     
     void unload(){
-        GraphicsWrapper::destroyMesh(&mMeshStone);
-        GraphicsWrapper::destroyTexture(&mTextureStone);
+        Renderer::destoryModel(mModelStone);
+        Renderer::destoryModel(mModelDirt);
+        Renderer::destoryModel(mModelGrass);
+        
+        Renderer::destroyObject(mObjectStone);
+        Renderer::destroyObject(mObjectDirt);
+        Renderer::destroyObject(mObjectGrass);
+        
+        Renderer::destroyTexture(mTextureStone);
+        Renderer::destroyTexture(mTextureDirt);
+        Renderer::destroyTexture(mTextureGrass);
+        
+        Renderer::destroyMaterial(mMaterialStone);
+        Renderer::destroyMaterial(mMaterialDirt);
+        Renderer::destroyMaterial(mMaterialGrass);
     }
     
 private:
     MyGrid mGrid;
-    GraphicsWrapper::Mesh mMeshStone;
-    GraphicsWrapper::Mesh mMeshDirt;
-    GraphicsWrapper::Mesh mMeshGrass;
-    GraphicsWrapper::Texture mTextureStone;
-    GraphicsWrapper::Texture mTextureDirt;
-    GraphicsWrapper::Texture mTextureGrass;
+    
+    Renderer::Model_handle mModelStone;
+    Renderer::Model_handle mModelDirt;
+    Renderer::Model_handle mModelGrass;
+    
+    Renderer::Object_handle mObjectStone;
+    Renderer::Object_handle mObjectDirt;
+    Renderer::Object_handle mObjectGrass;
+    
+    Renderer::Texture_handle mTextureStone;
+    Renderer::Texture_handle mTextureDirt;
+    Renderer::Texture_handle mTextureGrass;
+    
+    Renderer::Material_handle mMaterialStone;
+    Renderer::Material_handle mMaterialDirt;
+    Renderer::Material_handle mMaterialGrass;
 };
