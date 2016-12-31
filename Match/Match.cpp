@@ -3,7 +3,7 @@
 #include "Core/Error.hpp"
 #include "Core/Modules.hpp"
 
-#include "PlatformIndependenceLayer/GraphicsWrapper.hpp"
+#include "Renderer/Renderer.hpp"
 
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -50,15 +50,15 @@ private:
 };
 
 unsigned int nbVertices = 4;
-const float vertices[] = {-0.5f, -0.5f, 0.f,
-                                        0.5, -0.5, 0.f,
-                                        0.5, 0.5, 0.f,
-                                        -0.5, 0.5, 0.f
+const float vertices[] = {0.f, 0.f, 0.f,
+                                        0.f, 1.f, 0.f,
+                                        1.f, 1.f, 0.f,
+                                        1.f, 0.f, 0.f
 };
-const float texCoord[] = {-0.5f, -0.5f, 0.f,
-                                        0.5, -0.5,
-                                        0.5, 0.5,
-                                        -0.5, 0.5
+const float texCoord[] = {0.f, 0.f,
+                                        0.f, 1.f,
+                                        1.f, 1.f,
+                                        1.f, 0.f
 };
 const float normals[] = {0.f, 0.f, -1.f,
                                          0.f, 0.f, -1.f,
@@ -66,7 +66,7 @@ const float normals[] = {0.f, 0.f, -1.f,
                                          0.f, 0.f, -1.f
 };
 unsigned int nbFaces = 2;
-const unsigned int faces[] = { 2, 1, 0,  2, 0, 3};
+const unsigned int faces[] = { 0, 1, 2,  0, 2, 3};
 
 enum class Piece
 {
@@ -82,51 +82,30 @@ enum class Piece
 extern "C"
 int main(int argc, char *argv[]){
      try{
-        Modules::constructAllModules();
+         Modules::constructAllModules();
         
-        GraphicsWrapper::Mesh mesh;
-        GraphicsWrapper::createMesh(&mesh,
-                nbVertices,
-                vertices,
-                texCoord,
-                normals,
-                nbFaces,
-                faces
-        );
-        
-        GraphicsWrapper::Shader shader;
-        GraphicsWrapper::createShader(shader,
-                 "../data/shaders/noLight.vert",
-                 "../data/shaders/noLight.frag");
-        
-        GraphicsWrapper::Texture tex;
-        GraphicsWrapper::createTexture(&tex, "../data/stone.dds");
-
-        GraphicsWrapper::setTexture(&tex, &shader);
-        
-        glm::mat4 model(1.0f);
-        
-        glm::mat4 view (1.0f);
-         
-        glm::mat4 proj = glm::ortho(-0.5f, 0.5f,
-                                                        -0.5f, 0.5f,
-                                                        -100.f, 100.f);
-
+         Renderer::Texture_handle tex = Renderer::createTexture("../data/match/dark.dds");
+         Renderer::Material_handle mat = Renderer::createMaterial(tex);
+         Renderer::Model_handle model = Renderer::createModel(nbVertices, vertices, texCoord, normals, nbFaces, faces, mat );
+         Renderer::Object_handle obj = Renderer::createObject(model);
+         Renderer::Camera_handle cam = Renderer::createCamera();
+         Renderer::setActiveCamera(cam);
+         Renderer::getCameraProjectionMatrixRef(cam) = glm::ortho(0.f, 800.f,
+                                                                                                            0.f, 600.f,
+                                                                                                            -100.f, 100.f);
+         Renderer::getCameraViewMatrixRef(cam);
 		Vector2D<Piece> board;
-
+        
+        Renderer::getObjectMatrixRef(obj) = glm::scale(glm::mat4(1.f), glm::vec3(100.f, 100.f, 1.f));
         
         while(System::isRunning()){
             System::doEvent();
             System::clear();
             
-            glm::mat4 MVP = proj * view * model;
-            GraphicsWrapper::drawMesh(&mesh, MVP, shader);
+            Renderer::renderObject(obj);
             
             System::endFrame();
         }
-        
-        GraphicsWrapper::destroyShader(shader);
-        GraphicsWrapper::destroyMesh(&mesh);   
         
         Modules::destructAllModules();
         return 0;
