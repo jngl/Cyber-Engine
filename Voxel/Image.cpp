@@ -1,5 +1,8 @@
 #include "Image.hpp"
 
+#include <iostream>
+#include <cassert>
+
 Image::Image(unsigned int width, unsigned int height):
 mWidth(width),
 mHeight(height)
@@ -8,6 +11,7 @@ mHeight(height)
 }
 
 glm::vec3& Image::getPixelRef(unsigned int x, unsigned int y){
+    assert(x<mWidth && y<mHeight);
     return mData[y*mWidth + x];
 }
 

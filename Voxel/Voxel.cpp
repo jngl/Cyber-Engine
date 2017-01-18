@@ -11,7 +11,7 @@
 #include "Image.hpp"
 #include "Noise.hpp"
 
-#define RENDER_DIST 50
+#define RENDER_DIST 150
 #define SPEED 20.0f
 #define CAM_DIST 70.0f
 
@@ -57,6 +57,8 @@ glm::vec4 raycast(glm::vec3 camPos, glm::vec3 rayDir, glm::vec3& normal){
 	glm::vec3 delta=rayStep/rayDir;
 	
 	glm::bvec3 mask;
+    
+    glm::vec3 fmask(mask) ;
 	
 	for(int i=0; i<RENDER_DIST;++i){
 		glm::bvec3 b1 = glm::lessThan(tMax.xyz(), tMax.yzx());
@@ -64,16 +66,20 @@ glm::vec4 raycast(glm::vec3 camPos, glm::vec3 rayDir, glm::vec3& normal){
 		mask.x = b1.x && b2.x;
 		mask.y = b1.y && b2.y;
 		mask.z = b1.z && b2.z;
+        
+         fmask = glm::vec3(mask) ;
 		
-		tMax += glm::vec3(mask) * delta;
-		voxelPos += glm::vec3(mask) * rayStep;
+		tMax +=fmask * delta;
+		voxelPos += fmask * rayStep;
 		
-		if(voxelPos.y<perlinnoise(voxelPos.xz())){
-			normal = -glm::vec3(mask)*rayStep;
+       if(isBlock(voxelPos)){
+       // if(voxelPos.y<5.f){
+		//if(voxelPos.y<perlinnoise(voxelPos.xz())){
+			normal = -fmask*rayStep;
 			return glm::vec4(voxelPos, 1.0);
 		}
 	}
-	normal = glm::vec3(mask)*rayStep;
+	normal = fmask*rayStep;
 	return glm::vec4(voxelPos, -1.0);
 }
 
@@ -101,13 +107,14 @@ void mainImage( glm::vec3& fragColor, glm::vec2 fragCoord, glm::vec2 iResolution
 	fragColor=glm::vec3(0.3f, 0.3f, 1.0f);
 	
 	if(sky>0.0f){
-		fragColor=glm::vec3(p.y/HEIGHT, p.x/150.0f+0.5f, p.z/150.0f+0.5f);
-        //fragColor = texture.getPixelRef(glm::mod(p.x, 500.f), glm::mod(p.z, 500.f));
+		//fragColor=glm::vec3(p.y/HEIGHT, p.x/150.0f+0.5f, p.z/150.0f+0.5f);
+       // fragColor = texture.getPixelRef(glm::mod(p.x, 500.f), glm::mod(p.z, 500.f));
+        fragColor = texture.getPixelRef(p.x, p.z);
 		float diff=glm::max(glm::dot(light, normal), 0.0f);
 		diff=diff*0.3f+0.7f;
         fragColor*=diff;
 	}
-	fragColor*=255;
+	//fragColor*=255;
 }
 
 int main(){
@@ -131,9 +138,9 @@ int main(){
     float iGlobalTime(0.f);
     
     //camera
-	glm::vec3 camPos=glm::vec3(-HEIGHT, 10, -HEIGHT);
+	glm::vec3 camPos=glm::vec3(0, 20, 0);
     
-    glm::vec3 camView=glm::vec3(0.f, 0.0f, 0.0f);
+    glm::vec3 camView=glm::vec3(100, 0.0f, 100.0f);
     
     Timer timer;
     
