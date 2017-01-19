@@ -18,6 +18,10 @@ glm::vec3& Image::getPixelRef(unsigned int x, unsigned int y){
 unsigned int Image::getWidth(){
     return mWidth;
 }
+    
+glm::vec2 Image::getSize(){
+    return glm::vec2(mWidth, mHeight);
+}
 
 unsigned int Image::getHeight(){
     return mHeight;

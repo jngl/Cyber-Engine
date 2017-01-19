@@ -16,6 +16,8 @@ public:
     unsigned int getWidth();
     unsigned int getHeight();
     
+    glm::vec2 getSize();
+    
     void save(const char* filename);
     
 private:
