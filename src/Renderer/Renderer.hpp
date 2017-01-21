@@ -9,12 +9,14 @@ namespace Renderer
     struct Object;
     struct Texture;
     struct Camera;
+    struct Sprite;
 
     typedef Material* Material_handle;
     typedef Texture* Texture_handle;
     typedef Model* Model_handle;
     typedef Object* Object_handle;
     typedef Camera* Camera_handle;
+    typedef Sprite* Sprite_handle;
     
     //main
     void createRenderer();
@@ -51,5 +53,11 @@ namespace Renderer
     math::Matrix4f& getCameraViewMatrixRef(Camera_handle handle);
     math::Matrix4f& getCameraProjectionMatrixRef(Camera_handle handle);
     void setActiveCamera(Camera_handle handle);
+    
+    //sprite
+    Sprite_handle createSprite(Texture_handle handle);
+    void destroySprite(Sprite_handle sprite);
+    math::Matrix4f& getSpriteMatrixRef(Sprite_handle handle);
+    void renderSprite(Sprite_handle handle);
 }
 

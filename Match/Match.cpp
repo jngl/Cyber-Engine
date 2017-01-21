@@ -87,24 +87,23 @@ int main(int argc, char *argv[]){
          Modules::constructAllModules();
         
          Renderer::Texture_handle tex = Renderer::createTexture("../data/match/dark.dds");
-         Renderer::Material_handle mat = Renderer::createMaterial(tex);
-         Renderer::Model_handle model = Renderer::createModel(nbVertices, vertices, texCoord, normals, nbFaces, faces, mat );
-         Renderer::Object_handle obj = Renderer::createObject(model);
+         Renderer::Sprite_handle sprite = Renderer::createSprite(tex);
          Renderer::Camera_handle cam = Renderer::createCamera();
          Renderer::setActiveCamera(cam);
+
          Renderer::getCameraProjectionMatrixRef(cam).projectOrthographic(0.f, 800.f,
                                                                                                             0.f, 600.f,
                                                                                                             -100.f, 100.f);
          Renderer::getCameraViewMatrixRef(cam);
 		Vector2D<Piece> board;
         
-        Renderer::getObjectMatrixRef(obj).addScale(math::Vector3f{100.f, 100.f, 1.f});
+        Renderer::getSpriteMatrixRef(sprite).addScale(math::Vector3f{100.f, 100.f, 1.f});
         
         while(System::isRunning()){
             System::doEvent();
             System::clear();
             
-            Renderer::renderObject(obj);
+            Renderer::renderSprite(sprite);
             
             System::endFrame();
         }

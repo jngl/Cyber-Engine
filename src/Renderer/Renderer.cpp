@@ -4,19 +4,52 @@
 
 #include "../PlatformIndependenceLayer/GraphicsWrapper.hpp"
 
+unsigned int spriteNbVertices = 4;
+const float spriteVertices[] = {0.f, 0.f, 0.f,
+                                        0.f, 1.f, 0.f,
+                                        1.f, 1.f, 0.f,
+                                        1.f, 0.f, 0.f
+};
+const float spriteTexCoord[] = {0.f, 0.f,
+                                        0.f, 1.f,
+                                        1.f, 1.f,
+                                        1.f, 0.f
+};
+const float spriteNormals[] = {0.f, 0.f, -1.f,
+                                         0.f, 0.f, -1.f,
+                                         0.f, 0.f, -1.f,
+                                         0.f, 0.f, -1.f
+};
+unsigned int spriteNbFaces = 2;
+const unsigned int spriteFaces[] = { 0, 1, 2,  0, 2, 3};
+
 namespace Renderer
 {
     //main
     GraphicsWrapper::Shader defaultShader;
+    GraphicsWrapper::Shader noLightShader;
+    
+    GraphicsWrapper::Mesh spriteMesh;
     
     void createRenderer(){
         GraphicsWrapper::createShader(defaultShader,
                  "../data/shaders/basic.vert",
                  "../data/shaders/basic.frag");
+        GraphicsWrapper::createShader(noLightShader,
+                 "../data/shaders/noLight.vert",
+                 "../data/shaders/noLight.frag");
+        GraphicsWrapper::createMesh(&spriteMesh,
+                     spriteNbVertices,
+                     spriteVertices,
+                     spriteTexCoord,
+                     spriteNormals,
+                     spriteNbFaces,
+                     spriteFaces);
     }
     
     void destroyRenderer(){
         destroyShader(defaultShader);
+        destroyShader(noLightShader);
     }
     
     //material
@@ -133,14 +166,38 @@ namespace Renderer
         activeCamera = handle;
     }
     
-    
-    
-    
-    
     void renderObject(Object_handle handle){
         math::Matrix4f MVP = activeCamera->mProjectionMatrix * activeCamera->mViewMatrix* handle->matrix;
         GraphicsWrapper::setTexture(&handle->model->material->texture->mTexture, &defaultShader);
         GraphicsWrapper::drawMesh(&handle->model->mesh, MVP, defaultShader);
     }
     
+    
+    //sprite
+    struct Sprite{
+        Texture_handle mTexture;
+        math::Matrix4f mMatrix;
+    };
+    core::PoolAllocator<Sprite, 100> SpritePool;
+    
+    Sprite_handle createSprite(Texture_handle handle){
+        Sprite_handle result = SpritePool.create();
+        result->mMatrix.setIdentity();
+        result->mTexture = handle;
+        return result;
+    }
+    
+    void destroySprite(Sprite_handle sprite){
+        SpritePool.destory(sprite);
+    }
+    
+    math::Matrix4f& getSpriteMatrixRef(Sprite_handle handle){
+        return handle->mMatrix;
+    }
+    
+    void renderSprite(Sprite_handle handle){
+        math::Matrix4f MVP = activeCamera->mProjectionMatrix * activeCamera->mViewMatrix* handle->mMatrix;
+        GraphicsWrapper::setTexture(&handle->mTexture->mTexture, &noLightShader);
+        GraphicsWrapper::drawMesh(&spriteMesh, MVP, noLightShader);
+    }
 }
