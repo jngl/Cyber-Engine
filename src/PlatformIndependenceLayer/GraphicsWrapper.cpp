@@ -2,12 +2,11 @@
 
 #include "../Core/Error.hpp"
 
-#include <glm/gtc/type_ptr.hpp>
-
 #include <fstream>
 #include <vector>
 #include <iostream>
 #include <cstdio>
+#include <cstdlib>
 
 #define GL_DEBUG
 
@@ -189,11 +188,11 @@ namespace GraphicsWrapper
         destroyBuffer(&mesh->buffer[3]);
     }
     void drawMesh   (Mesh* mesh, 
-                     glm::mat4 mvp,
+                     const math::Matrix4f mvp,
                      const Shader& shader){
         
         glCheck(glUseProgram(shader.id));
-        glCheck(glUniformMatrix4fv(shader.GBuffersMdvMatLoc,1,GL_FALSE,glm::value_ptr(mvp)));
+        glCheck(glUniformMatrix4fv(shader.GBuffersMdvMatLoc,1,GL_FALSE,&mvp.m[0][0]));
         
         drawBuffer({&mesh->buffer[0], &mesh->buffer[1], &mesh->buffer[2], &mesh->buffer[3]});
     }

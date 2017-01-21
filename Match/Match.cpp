@@ -5,8 +5,10 @@
 
 #include "Renderer/Renderer.hpp"
 
-#include <glm/mat4x4.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include "Math/Vector2.hpp"
+#include "Math/Vector3.hpp"
+#include "Math/Vector4.hpp"
+#include "Math/Matrix4.hpp"
 
 #include <iostream>
 #include <vector>
@@ -90,13 +92,13 @@ int main(int argc, char *argv[]){
          Renderer::Object_handle obj = Renderer::createObject(model);
          Renderer::Camera_handle cam = Renderer::createCamera();
          Renderer::setActiveCamera(cam);
-         Renderer::getCameraProjectionMatrixRef(cam) = glm::ortho(0.f, 800.f,
+         Renderer::getCameraProjectionMatrixRef(cam).projectOrthographic(0.f, 800.f,
                                                                                                             0.f, 600.f,
                                                                                                             -100.f, 100.f);
          Renderer::getCameraViewMatrixRef(cam);
 		Vector2D<Piece> board;
         
-        Renderer::getObjectMatrixRef(obj) = glm::scale(glm::mat4(1.f), glm::vec3(100.f, 100.f, 1.f));
+        Renderer::getObjectMatrixRef(obj).addScale(math::Vector3f{100.f, 100.f, 1.f});
         
         while(System::isRunning()){
             System::doEvent();

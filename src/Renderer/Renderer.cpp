@@ -4,8 +4,6 @@
 
 #include "../PlatformIndependenceLayer/GraphicsWrapper.hpp"
 
-#include <glm/gtc/matrix_transform.hpp>
-
 namespace Renderer
 {
     //main
@@ -68,14 +66,14 @@ namespace Renderer
     //Object
     struct Object{
         Model_handle model;
-        glm::mat4 matrix;
+        math::Matrix4f matrix;
     };
     core::PoolAllocator<Object, 100> ObjectPool;
     
     Object_handle createObject(Model_handle handle){
         Object_handle result = ObjectPool.create();
         result->model = handle;
-        result->matrix = glm::mat4(1.0);
+        result->matrix.setIdentity();
         return result;
     }
     
@@ -83,7 +81,7 @@ namespace Renderer
         ObjectPool.destory(handle);
     }
     
-    glm::mat4& getObjectMatrixRef(Object_handle handle){
+    math::Matrix4f& getObjectMatrixRef(Object_handle handle){
         return handle->matrix;
     }
     
@@ -106,16 +104,16 @@ namespace Renderer
     
     //camera
     struct Camera{
-        glm::mat4 mViewMatrix;
-        glm::mat4 mProjectionMatrix;
+        math::Matrix4f mViewMatrix;
+        math::Matrix4f mProjectionMatrix;
     };
     core::PoolAllocator<Camera, 100>CameraPool;
     Camera_handle activeCamera;
     
     Camera_handle createCamera(){
         Camera_handle result = CameraPool.create();
-        result->mViewMatrix = glm::mat4(1.0f);
-        result->mProjectionMatrix = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.f);
+        result->mViewMatrix.setIdentity();
+        result->mProjectionMatrix.projectPerspective(M_PI/4.f, 4.0f / 3.0f, 0.1f, 100.f);
         return result;
     }
     
@@ -123,11 +121,11 @@ namespace Renderer
         CameraPool.destory(handle);
     }
     
-    glm::mat4& getCameraViewMatrixRef(Camera_handle handle){
+    math::Matrix4f& getCameraViewMatrixRef(Camera_handle handle){
         return handle->mViewMatrix;
     }
     
-    glm::mat4& getCameraProjectionMatrixRef(Camera_handle handle){
+    math::Matrix4f& getCameraProjectionMatrixRef(Camera_handle handle){
         return handle->mProjectionMatrix;
     }
     
@@ -140,7 +138,7 @@ namespace Renderer
     
     
     void renderObject(Object_handle handle){
-        glm::mat4 MVP = activeCamera->mProjectionMatrix * activeCamera->mViewMatrix* handle->matrix;
+        math::Matrix4f MVP = activeCamera->mProjectionMatrix * activeCamera->mViewMatrix* handle->matrix;
         GraphicsWrapper::setTexture(&handle->model->material->texture->mTexture, &defaultShader);
         GraphicsWrapper::drawMesh(&handle->model->mesh, MVP, defaultShader);
     }

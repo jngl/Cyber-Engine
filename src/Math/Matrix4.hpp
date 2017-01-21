@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <cstring>
 
 #include "Vector3.hpp"
 
@@ -47,7 +48,7 @@ namespace math
         }
 
         void projectPerspective(float FOV, float aspectRatio, float near, float far){
-            float tanThetaOver2 = tan(FOV * (float)M_PI / 360);
+            float tanThetaOver2 = tan(FOV);
             setIdentity();
 
             // X and Y scaling
@@ -63,8 +64,6 @@ namespace math
 
             // Must zero this out, the identity has it as 1.
             m[3][3] = 0;
-
-            return m;
         }
         
         void setTranslation(const Vector3<T>& vecPos){
@@ -76,9 +75,8 @@ namespace math
         
         void addTranslation(const Vector3<T>& v){
             Matrix4<T> r;
-            r.SetTranslation(v);
+            r.setTranslation(v);
             (*this) *= r;
-            return *this;
         }
 
         void setScale(const Vector3<T>& vecScale)
@@ -93,7 +91,6 @@ namespace math
             Matrix4<T> r;
             r.setScale(vecScale);
             (*this) *= r;
-            return *this;
         }
 
         void setRotation(float flAngle, const Vector3<T>& v){
@@ -102,8 +99,8 @@ namespace math
             float y = v.y;
             float z = v.z;
 
-            float c = cos(flAngle*(float)M_PI/180);
-            float s = sin(flAngle*(float)M_PI/180);
+            float c = cos(flAngle);
+            float s = sin(flAngle);
             float t = 1-c;
 
             m[0][0] = x*x*t + c;
@@ -123,7 +120,6 @@ namespace math
             Matrix4<T> r;
             r.setRotation(flAngle, v);
             (*this) *= r;
-            return *this;
         }
         
         T m[4][4];

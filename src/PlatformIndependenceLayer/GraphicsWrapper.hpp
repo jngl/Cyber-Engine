@@ -4,8 +4,7 @@
 
 #include <string>
 
-#include <glm/mat4x4.hpp>
-
+#include "Math/Matrix4.hpp"
 
 namespace GraphicsWrapper
 {
@@ -73,6 +72,6 @@ namespace GraphicsWrapper
                     );
     void destroyMesh(Mesh* mesh);
     void drawMesh   (Mesh* mesh, 
-                     glm::mat4 mvp,
+                     const math::Matrix4f mvp,
                      const Shader& shader);
 }

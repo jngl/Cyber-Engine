@@ -1,6 +1,6 @@
 #pragma once
 
-#include <glm/mat4x4.hpp>
+#include "Math/Matrix4.hpp"
 
 namespace Renderer
 {
@@ -38,7 +38,7 @@ namespace Renderer
     //Object
     Object_handle createObject(Model_handle handle);
     void destroyObject(Object_handle handle);
-    glm::mat4& getObjectMatrixRef(Object_handle handle);
+    math::Matrix4f& getObjectMatrixRef(Object_handle handle);
     void renderObject(Object_handle handle);
     
     //Texture
@@ -48,8 +48,8 @@ namespace Renderer
     //camera
     Camera_handle createCamera();
     void destroyCamera(Camera_handle handle);
-    glm::mat4& getCameraViewMatrixRef(Camera_handle handle);
-    glm::mat4& getCameraProjectionMatrixRef(Camera_handle handle);
+    math::Matrix4f& getCameraViewMatrixRef(Camera_handle handle);
+    math::Matrix4f& getCameraProjectionMatrixRef(Camera_handle handle);
     void setActiveCamera(Camera_handle handle);
 }
 
