@@ -51,25 +51,6 @@ private:
 	std::size_t mSizeY;
 };
 
-unsigned int nbVertices = 4;
-const float vertices[] = {0.f, 0.f, 0.f,
-                                        0.f, 1.f, 0.f,
-                                        1.f, 1.f, 0.f,
-                                        1.f, 0.f, 0.f
-};
-const float texCoord[] = {0.f, 0.f,
-                                        0.f, 1.f,
-                                        1.f, 1.f,
-                                        1.f, 0.f
-};
-const float normals[] = {0.f, 0.f, -1.f,
-                                         0.f, 0.f, -1.f,
-                                         0.f, 0.f, -1.f,
-                                         0.f, 0.f, -1.f
-};
-unsigned int nbFaces = 2;
-const unsigned int faces[] = { 0, 1, 2,  0, 2, 3};
-
 enum class Piece
 {
 	PLAYER,
