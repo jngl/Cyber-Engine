@@ -1,18 +1,51 @@
-#include "System.hpp"
 #include "Core/Error.hpp"
+#include "Core/Modules.hpp"
+
+#include "System.hpp"
+
+#include "Voxel.hpp"
+
+#include "Renderer/Renderer.hpp"
+#include "Renderer/BasicCamera.hpp"
+
+#include "PlatformIndependenceLayer/Timer.hpp"
 
 #include <iostream>
 
-#include <SDL_main.h>
-
-#include "Boxel.hpp"
-
-#ifdef __cplusplus
 extern "C"
-#endif
 int main(int argc, char *argv[]){
      try{
-        boxel();
+        Modules::constructAllModules();
+    
+        BasicCamera cam;
+        Renderer::Camera_handle camHandle = Renderer::createCamera();
+        Renderer::setActiveCamera(camHandle);
+        cam.dist=30.f;
+        
+        VoxelChunk<10, 10, 10> chunk;
+        chunk.loadTexture();
+        chunk.generateGrid();
+        chunk.generateMesh();
+        
+        Timer timer;
+        float frameTime = 0.f;
+        
+        while(System::isRunning()){
+            System::doEvent();
+            System::clear();
+        
+            updateBasicCamera(cam, frameTime);
+            Renderer::getCameraViewMatrixRef(camHandle) = cam.viewMatrix;
+            
+            chunk.draw();
+            
+            System::endFrame();
+            
+            frameTime = timer.timeInSecond();
+            timer.restart();
+        }
+        Modules::destructAllModules();
+    
         return 0;
         
     }catch(core::Error& e){
