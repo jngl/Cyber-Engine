@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <cassert>
+#include <cmath>
 
 Image::Image(unsigned int width, unsigned int height):
 mWidth(width),
@@ -10,7 +11,7 @@ mHeight(height)
     mData.resize(width*height);
 }
 
-glm::vec3& Image::getPixelRef(unsigned int x, unsigned int y){
+math::Vector3f& Image::getPixelRef(unsigned int x, unsigned int y){
     assert(x<mWidth && y<mHeight);
     return mData[y*mWidth + x];
 }
@@ -19,8 +20,8 @@ unsigned int Image::getWidth(){
     return mWidth;
 }
     
-glm::vec2 Image::getSize(){
-    return glm::vec2(mWidth, mHeight);
+math::Vector2f Image::getSize(){
+    return {static_cast<float>(mWidth), static_cast<float>(mHeight)};
 }
 
 unsigned int Image::getHeight(){
@@ -36,9 +37,9 @@ void Image::save(const char* filename){
     
     for(int y(mHeight-1); y>=0; --y){
         for(int x(0); x<mWidth; ++x){
-            glm::vec3& color = getPixelRef(x, y);
-            color = glm::max(color, glm::vec3(0.f));
-                file<<glm::floor(color.x)<<" "<<glm::floor(color.y)<<" "<<glm::floor(color.z)<<" ";
+            math::Vector3f& color = getPixelRef(x, y);
+            color = math::Vector3f::max(color, math::Vector3f{0.f, 0.f, 0.f});
+                file<<math::floor(color.x)<<" "<<math::floor(color.y)<<" "<<math::floor(color.z)<<" ";
         }
         file<<std::endl;
     }

@@ -1,21 +1,21 @@
 #pragma once
 
-#define GLM_FORCE_SWIZZLE
-#include <glm/glm.hpp>
+#include "Math/Vector3.hpp"
+#include "Math/Vector2.hpp"
 
 class VoxelCamera
 {
 public:
     VoxelCamera();
     
-    void set(glm::vec3 pos, glm::vec3 view);
+    void set(math::Vector3f pos, math::Vector3f view);
     
-    glm::vec3 getPosition();
-    glm::vec3 getView();
+    math::Vector3f getPosition();
+    math::Vector3f getView();
     
-    glm::vec3 getRaydir(glm::vec2 uv);
+    math::Vector3f getRaydir(math::Vector2f uv);
     
 private:
-    glm::vec3 mPosition;
-    glm::vec3 mView;
+    math::Vector3f mPosition;
+    math::Vector3f mView;
 };

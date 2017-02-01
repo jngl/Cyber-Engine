@@ -11,20 +11,23 @@ public:
     
     void load();
     
-    bool isBlock(glm::vec3 pos);
-    glm::vec3 getColor(glm::vec3 pos);
+    bool isBlock(math::Vector3f pos);
+    math::Vector3f getColor(math::Vector3f pos);
     
     void save();
     
     VoxelCamera& getCameraRef();
+	
+	constexpr static int sizeScene = 50;
+	constexpr static float sizeSceneF = 50.f;
+    
+    constexpr static float MOUNTAIN_WIDTH =  0.9f;
+    constexpr static float MOUNTAIN_HEIGHT = 25.0f;
     
 private:
     Image heightMap;
     Image texture;
     VoxelCamera camera;
     
-    constexpr static float MOUNTAIN_WIDTH =  0.9f;
-    constexpr static float MOUNTAIN_HEIGHT = 20.0f;
-    
-    float perlinnoise(glm::vec2 p);
+    float genHeight(math::Vector2f p);
 };

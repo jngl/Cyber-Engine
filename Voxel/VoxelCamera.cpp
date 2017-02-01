@@ -1,30 +1,34 @@
 #include "VoxelCamera.hpp"
 
-const glm::vec3 camUp=glm::vec3(0.0f, 1.0f, 0.0f);
+const math::Vector3f camUp{0.0f, 1.0f, 0.0f};
 
 VoxelCamera::VoxelCamera(){
-    set(glm::vec3(-50, 50, -50), glm::vec3(0, 0.0f, 0.0f));
+    set(math::Vector3f{0, 40, 0}, math::Vector3f{25.f, 0.0f, 25.0f});
 }
     
-void VoxelCamera::set(glm::vec3 pos, glm::vec3 view){
+void VoxelCamera::set(math::Vector3f pos, math::Vector3f view){
     mPosition = pos;
     mView = view;
 }
     
-glm::vec3 VoxelCamera::getPosition(){
+math::Vector3f VoxelCamera::getPosition(){
     return mPosition;
 }
 
-glm::vec3 VoxelCamera::getView(){
+math::Vector3f VoxelCamera::getView(){
     return mView;
 }
 
-glm::vec3 VoxelCamera::getRaydir(glm::vec2 uv){
-    glm::vec3 camDir=glm::normalize(mView-mPosition);
-  	glm::vec3 u=glm::normalize(glm::cross(camUp,camDir));
-  	glm::vec3 v=glm::cross(camDir,u);
-  	glm::vec3 vcv=(mPosition+camDir);
-  	glm::vec3 scrCoord=vcv+uv.x*u*0.8f+uv.y*v*0.8f;
-  	glm::vec3 rayDir=scrCoord-mPosition;
+math::Vector3f VoxelCamera::getRaydir(math::Vector2f uv){
+    math::Vector3f camDir=mView-mPosition;
+	camDir.normalize();
+  	math::Vector3f u;
+	u =camUp.getCrossProduct(camDir);
+	u.normalize();
+  	math::Vector3f v;
+	v = camDir.getCrossProduct(u);
+  	math::Vector3f vcv=(mPosition+camDir);
+  	math::Vector3f scrCoord=vcv+u*uv.x*0.8f+v*uv.y*0.8f;
+  	math::Vector3f rayDir=scrCoord-mPosition;
     return rayDir;
 }

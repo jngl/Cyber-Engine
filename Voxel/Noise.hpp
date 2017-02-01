@@ -1,10 +1,10 @@
 #pragma once
 
-#define GLM_FORCE_SWIZZLE
-#include <glm/glm.hpp>
+#include "Math/Vector2.hpp"
 
-float randFloatFromVec2(glm::vec2 n);
+float randFloatFromVec2(math::Vector2f n);
 
 float interpolation(float a, float b, float alpha);
 
-float noise(glm::vec2 p, glm::vec2 size);
+float noise(math::Vector2f p, math::Vector2f size);
+

@@ -1,32 +1,44 @@
 #include "VoxelScene.hpp"
 
+#include <cmath>
+#include <cassert>
+#include <iostream>
+
 VoxelScene::VoxelScene():
-heightMap(50, 50),
-texture(50, 50)
+heightMap(sizeScene, sizeScene),
+texture(sizeScene, sizeScene)
 {
 }
     
 void VoxelScene::load(){
     for(int y(0); y<heightMap.getHeight(); ++y){
         for(int x(0); x<heightMap.getWidth(); ++x){
-            float h = perlinnoise(glm::vec2(x, y));
-            heightMap.getPixelRef(x, y)=glm::vec3(h);
+            float h = genHeight(math::Vector2f{static_cast<float>(x), static_cast<float>(y)});
+            heightMap.getPixelRef(x, y).setAllAxes(h);
+			
+			assert(h>=0.f && h<=MOUNTAIN_HEIGHT);
+			
            if(h<MOUNTAIN_HEIGHT/2.f){
-                texture.getPixelRef(x, y)=glm::mix(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 0.f, 255.f), h/(MOUNTAIN_HEIGHT/2.f));
+                texture.getPixelRef(x, y)=math::Vector3f::mix(math::Vector3f{0.f, 0.f, 0.f}, math::Vector3f{0.f, 0.f, 255.f}, h/(MOUNTAIN_HEIGHT/2.f));
             }else{
-                texture.getPixelRef(x, y)=glm::mix(glm::vec3(0.f, 255.f, 0.f), glm::vec3(255.f), (h-MOUNTAIN_HEIGHT/2.f)/(MOUNTAIN_HEIGHT/2.f));
+                texture.getPixelRef(x, y)=math::Vector3f::mix(math::Vector3f{0.f, 255.f, 0.f}, math::Vector3f{255.f, 255.f, 255.f}, (h-MOUNTAIN_HEIGHT/2.f)/(MOUNTAIN_HEIGHT/2.f));
             }
         }
     }
 }
 
-bool VoxelScene::isBlock(glm::vec3 pos){
-    float h = heightMap.getPixelRef(glm::mod(pos.x, (float)heightMap.getWidth()), glm::mod(pos.z, (float)heightMap.getHeight())).x;
-    return pos.y<h;
+bool VoxelScene::isBlock(math::Vector3f pos){
+	/*if(pos.x<0.f || pos.z<0.f || pos.x>=sizeSceneF || pos.z>=sizeSceneF){
+		return false;
+	}
+	else{*/
+		float h = heightMap.getPixelRef(pos.x,pos.z).x;
+		return pos.y<h; 
+	//}
 }
 
-glm::vec3 VoxelScene::getColor(glm::vec3 pos){
-    return texture.getPixelRef(glm::mod(pos.x, (float)texture.getWidth()), glm::mod(pos.z, (float)texture.getHeight()));
+math::Vector3f VoxelScene::getColor(math::Vector3f pos){
+    return texture.getPixelRef(fmod(math::abs(pos.x), (float)texture.getWidth()), fmod(math::abs(pos.z), (float)texture.getHeight()));
 }
 
 void VoxelScene::save(){
@@ -38,6 +50,7 @@ VoxelCamera& VoxelScene::getCameraRef(){
     return camera;
 }
 
-float VoxelScene::perlinnoise(glm::vec2 p){
-	return ( noise(p*MOUNTAIN_WIDTH, glm::vec2(8.0f)) * 0.25f+0.75f*noise(p*MOUNTAIN_WIDTH, glm::vec2(32.0f)) )*MOUNTAIN_HEIGHT;	
+float VoxelScene::genHeight(math::Vector2f p){
+	return ( noise(p*MOUNTAIN_WIDTH, math::Vector2f{8.0f, 8.f}) * 0.25f + 0.75f*noise(p*MOUNTAIN_WIDTH, math::Vector2f{32.0f, 32.f}) )*MOUNTAIN_HEIGHT;	
+	//return randFloatFromVec2(p) * MOUNTAIN_HEIGHT;
 }
