@@ -5,8 +5,18 @@
 
 #include "Math/MathUtils.hpp"
 
-VoxelRenderer::VoxelRenderer():
-result(300, 200)
+uint32_t colorToUInt32(math::Vector3f color){
+	uint32_t r = static_cast<uint32_t>(color.x);
+	uint32_t g = static_cast<uint32_t>(color.y);
+	uint32_t b = static_cast<uint32_t>(color.z);
+
+	return (r << 16) | (g << 8) | b;
+}
+
+VoxelRenderer::VoxelRenderer(uint32_t* screen, int screenWidth, int screenHeight):
+mScreen(screen),
+mScreenWidth(screenWidth),
+mScreenHeight(screenHeight)
 {
 }
     
@@ -15,26 +25,29 @@ void VoxelRenderer::loadScene(){
 }
 
 void VoxelRenderer::render(){
-    Timer timer;
+    //Timer timer;
 	
 	const int nbPart = 8;
 	
-	int part = result.getHeight() / nbPart;
+	int part = mScreenHeight / nbPart;
     
 	#pragma omp parallel for
-	for(int y=0; y<result.getHeight(); ++y){
-        for(int x(0); x<result.getWidth(); ++x){
-             result.getPixelRef(x, y) = renderPixel(math::Vector2f{static_cast<float>(x), static_cast<float>(y)});
+	for(int y=0; y<mScreenHeight; ++y){
+        for(int x(0); x<mScreenWidth; ++x){
+			mScreen[y * mScreenWidth + x] = colorToUInt32(renderPixel(math::Vector2f{static_cast<float>(x), static_cast<float>(mScreenHeight - y)}));
         }
     }
     
-    std::cout<<"time : "<<timer.timeInSecond()<<std::endl;
-	std::cout<<"FPS : "<<1.f/timer.timeInSecond()<<std::endl;
+    /*std::cout<<"time : "<<timer.timeInSecond()<<std::endl;
+	std::cout<<"FPS : "<<1.f/timer.timeInSecond()<<std::endl;*/
 }
 
 void VoxelRenderer::save(){
     scene.save();
-    result.save("result.ppm");
+}
+
+VoxelScene& VoxelRenderer::getSceneRef(){
+	return scene;
 }
 
 float VoxelRenderer::intbound(float pos, float dir) {
@@ -101,7 +114,8 @@ bool VoxelRenderer::raycast(math::Vector3f rayDir, math::Vector3f& normal, math:
 
 math::Vector3f VoxelRenderer::renderPixel(math::Vector2f pixelCoord)
 {
-	math::Vector2f uv = (pixelCoord / result.getSize())*2.0f-1.0f;        //pixel coord (-1, 1)
+	math::Vector2f size{static_cast<float>(mScreenWidth), static_cast<float>(mScreenHeight)};
+	math::Vector2f uv = (pixelCoord /size)*2.0f-1.0f;        //pixel coord (-1, 1)
 	math::Vector3f rayDir = scene.getCameraRef().getRaydir(uv);     //ray dir
 
 	math::Vector3f normal, pos;

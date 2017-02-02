@@ -3,7 +3,7 @@
 const math::Vector3f camUp{0.0f, 1.0f, 0.0f};
 
 VoxelCamera::VoxelCamera(){
-    set(math::Vector3f{0, 40, 0}, math::Vector3f{25.f, 0.0f, 25.0f});
+    
 }
     
 void VoxelCamera::set(math::Vector3f pos, math::Vector3f view){
