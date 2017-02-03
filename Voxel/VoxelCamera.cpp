@@ -9,6 +9,16 @@ VoxelCamera::VoxelCamera(){
 void VoxelCamera::set(math::Vector3f pos, math::Vector3f view){
     mPosition = pos;
     mView = view;
+	
+	mDir = mView-mPosition;
+	mDir.normalize();
+	
+	mU = camUp.getCrossProduct(mDir);
+	mU.normalize();
+	
+	mV = mDir.getCrossProduct(mU);
+	
+	mVCV = mPosition+mDir;
 }
     
 math::Vector3f VoxelCamera::getPosition(){
@@ -20,15 +30,7 @@ math::Vector3f VoxelCamera::getView(){
 }
 
 math::Vector3f VoxelCamera::getRaydir(math::Vector2f uv){
-    math::Vector3f camDir=mView-mPosition;
-	camDir.normalize();
-  	math::Vector3f u;
-	u =camUp.getCrossProduct(camDir);
-	u.normalize();
-  	math::Vector3f v;
-	v = camDir.getCrossProduct(u);
-  	math::Vector3f vcv=(mPosition+camDir);
-  	math::Vector3f scrCoord=vcv+u*uv.x*0.8f+v*uv.y*0.8f;
+  	math::Vector3f scrCoord=mVCV+mU*uv.x*0.8f+mV*uv.y*0.8f;
   	math::Vector3f rayDir=scrCoord-mPosition;
     return rayDir;
 }

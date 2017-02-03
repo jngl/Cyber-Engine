@@ -18,4 +18,7 @@ public:
 private:
     math::Vector3f mPosition;
     math::Vector3f mView;
+	math::Vector3f mDir;
+	math::Vector3f mU, mV;
+	math::Vector3f mVCV;
 };

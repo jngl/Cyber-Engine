@@ -32,7 +32,7 @@ bool VoxelScene::isBlock(math::Vector3f pos){
 		return false;
 	}
 	else{*/
-		float h = heightMap.getPixelRef(pos.x,pos.z).x;
+		float h = heightMap.getPixelRef(pos.x+0.5f,pos.z+0.5f).x;
 		return pos.y<h; 
 	//}
 }
@@ -52,5 +52,4 @@ VoxelCamera& VoxelScene::getCameraRef(){
 
 float VoxelScene::genHeight(math::Vector2f p){
 	return ( noise(p*MOUNTAIN_WIDTH, math::Vector2f{8.0f, 8.f}) * 0.25f + 0.75f*noise(p*MOUNTAIN_WIDTH, math::Vector2f{32.0f, 32.f}) )*MOUNTAIN_HEIGHT;	
-	//return randFloatFromVec2(p) * MOUNTAIN_HEIGHT;
 }
