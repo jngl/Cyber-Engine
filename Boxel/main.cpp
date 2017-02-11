@@ -3,12 +3,9 @@
 
 #include "System.hpp"
 
-#include "Voxel.hpp"
-
-#include "Renderer/Renderer.hpp"
-#include "Renderer/BasicCamera.hpp"
-
 #include "PlatformIndependenceLayer/Timer.hpp"
+
+#include "BoxelScene/BoxelScene.hpp"
 
 #include <iostream>
 
@@ -16,16 +13,8 @@ extern "C"
 int main(int argc, char *argv[]){
      try{
         Modules::constructAllModules();
-    
-        BasicCamera cam;
-        Renderer::Camera_handle camHandle = Renderer::createCamera();
-        Renderer::setActiveCamera(camHandle);
-        cam.dist=30.f;
-        
-        VoxelChunk<10, 10, 10> chunk;
-        chunk.loadTexture();
-        chunk.generateGrid();
-        chunk.generateMesh();
+	
+	BoxelScene mScene;
         
         Timer timer;
         float frameTime = 0.f;
@@ -33,11 +22,10 @@ int main(int argc, char *argv[]){
         while(System::isRunning()){
             System::doEvent();
             System::clear();
-        
-            updateBasicCamera(cam, frameTime);
-            Renderer::getCameraViewMatrixRef(camHandle) = cam.viewMatrix;
-            
-            chunk.draw();
+	    
+	    mScene.update(frameTime);
+	    
+	    mScene.draw();
             
             System::endFrame();
             
