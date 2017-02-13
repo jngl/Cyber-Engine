@@ -39,6 +39,10 @@ find_package(OpenMP REQUIRED)
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 
+#Boost
+find_package(Boost COMPONENTS system filesystem REQUIRED)
+
+
 #Engine
 include_directories(src/)
 
@@ -50,6 +54,8 @@ TARGET_LINK_LIBRARIES(CyberEngine
             ${OPENGL_LIBRARIES}
             ${GLEW_LIBRARIES}
             ${CMAKE_DL_LIBS}
+            ${Boost_FILESYSTEM_LIBRARY}
+			${Boost_SYSTEM_LIBRARY}
 )
 
 #Boxel

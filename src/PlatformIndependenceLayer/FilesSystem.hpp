@@ -2,9 +2,11 @@
 
 #include <string>
 
-class FilesSystem{
-public:
-    
-    static std::string getDataPath();
-    static std::string getPrefPath();
-};
+#include <boost/filesystem.hpp>
+
+namespace FilesSystem{
+	using namespace boost::filesystem;
+	
+    path getDataPath();
+    path getPrefPath();
+}
