@@ -65,13 +65,6 @@ TARGET_LINK_LIBRARIES(Boxel
             CyberEngine
 )
 
-#Match
-file(GLOB_RECURSE Match_source_files Match/*)
-add_executable(Match ${Match_source_files})
-TARGET_LINK_LIBRARIES(Match
-            CyberEngine
-)
-
 #Voxel
 file(GLOB_RECURSE Voxel_source_files Voxel/*)
 add_executable(Voxel ${Voxel_source_files})

@@ -22,5 +22,5 @@ namespace Resources
 		typedef typename ResourceTypeDef::ResourceType ResourceType;
 		
 		static Resource<ResourceType> get(std::string name);
-	}
-};
+	};
+}

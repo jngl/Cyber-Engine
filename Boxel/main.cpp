@@ -14,7 +14,7 @@ int main(int argc, char *argv[]){
      try{
         Modules::constructAllModules();
 	
-	BoxelScene mScene;
+		BoxelScene mScene;
         
         Timer timer;
         float frameTime = 0.f;
