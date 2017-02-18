@@ -1,16 +1,12 @@
 #include "VoxelRenderer.hpp"
+#include "VoxelWindow.hpp"
 
 #include "PlatformIndependenceLayer/Timer.hpp"
 
-#include <SDL.h>
-
 int main(){
-    SDL_Init(SDL_INIT_VIDEO); 
-    SDL_Window* window = SDL_CreateWindow("Voxel", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 300, 200, 0);
+	VoxelWindow window;
 	
-    SDL_Surface* screen = SDL_GetWindowSurface(window);
-	
-	VoxelRenderer renderer(static_cast<uint32_t*>(screen->pixels), screen->w, screen->h);
+	VoxelRenderer renderer(window.getPixels(), window.getWidth(), window.getHeight());
 	renderer.loadScene();
 	
 	bool cont = true;
@@ -33,18 +29,15 @@ int main(){
         
         renderer.getSceneRef().getCameraRef().set(camPos, math::Vector3f{25.f, 10.0f, 25.0f});
         
-        SDL_LockSurface(screen);
+        window.lock();
 		
 		renderer.render();
 
-		SDL_UnlockSurface(screen);
+		window.unlock();
         
-		SDL_UpdateWindowSurface(window);
+		window.updateSurface();
         
 	}
-	
-    SDL_DestroyWindow(window);
-    SDL_Quit();
     return 0;
 }
 
