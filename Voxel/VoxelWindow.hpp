@@ -19,5 +19,7 @@ public:
 	void unlock();
 	
 	SDL_Window* window;
-	SDL_Surface* screen;
+	SDL_Surface* surface;
+	SDL_Renderer* renderer;
+	SDL_Texture* texture;
 };

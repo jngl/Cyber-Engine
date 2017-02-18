@@ -13,8 +13,7 @@ uint32_t colorToUInt32(math::Vector3f color){
 	return (r << 16) | (g << 8) | b;
 }
 
-VoxelRenderer::VoxelRenderer(uint32_t* screen, int screenWidth, int screenHeight):
-mScreen(screen),
+VoxelRenderer::VoxelRenderer( int screenWidth, int screenHeight):
 mScreenWidth(screenWidth),
 mScreenHeight(screenHeight)
 {
@@ -24,7 +23,7 @@ void VoxelRenderer::loadScene(){
     scene.load();
 }
 
-void VoxelRenderer::render(){
+void VoxelRenderer::render(uint32_t* screen){
     //Timer timer;
 	
 	const int nbPart = 8;
@@ -34,7 +33,7 @@ void VoxelRenderer::render(){
 	#pragma omp parallel for
 	for(int y=0; y<mScreenHeight; ++y){
         for(int x(0); x<mScreenWidth; ++x){
-			mScreen[y * mScreenWidth + x] = colorToUInt32(renderPixel(math::Vector2f{static_cast<float>(x), static_cast<float>(mScreenHeight - y)}));
+			screen[y * mScreenWidth + x] = colorToUInt32(renderPixel(math::Vector2f{static_cast<float>(x), static_cast<float>(mScreenHeight - y)}));
         }
     }
     

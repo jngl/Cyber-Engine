@@ -3,10 +3,12 @@
 
 #include "PlatformIndependenceLayer/Timer.hpp"
 
+#include <iostream>
+
 int main(){
 	VoxelWindow window;
 	
-	VoxelRenderer renderer(window.getPixels(), window.getWidth(), window.getHeight());
+	VoxelRenderer renderer(window.getWidth(), window.getHeight());
 	renderer.loadScene();
 	
 	bool cont = true;
@@ -15,6 +17,7 @@ int main(){
 	const float speed = 0.25f;
 	
 	Timer timer;
+	float time;
 	
 	while(cont){
 		SDL_Event e;
@@ -24,14 +27,18 @@ int main(){
             }
         }
         
-        float time = timer.timeInSecond();
+        float frameTime =  timer.timeInSecond();
+		timer.restart();
+        time += frameTime;
         camPos = {25.f + 10 * math::cos(time*speed), 30, 25.f + 10.f * math::sin(time*speed)};
+		
+		std::cout<<"\rFPS : "<< 1.f/frameTime<<std::flush;
         
         renderer.getSceneRef().getCameraRef().set(camPos, math::Vector3f{25.f, 10.0f, 25.0f});
         
         window.lock();
 		
-		renderer.render();
+		renderer.render(window.getPixels());
 
 		window.unlock();
         

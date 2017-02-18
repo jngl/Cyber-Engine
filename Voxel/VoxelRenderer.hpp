@@ -9,18 +9,17 @@
 class VoxelRenderer
 {
 public:
-    VoxelRenderer(uint32_t* screen, int screenWidth, int screenHeight);
+    VoxelRenderer(int screenWidth, int screenHeight);
     
     void loadScene();
     
-    void render();
+    void render(uint32_t* screen);
     
     void save();
 	
 	VoxelScene& getSceneRef();
     
 private:
-	uint32_t* mScreen;
     VoxelScene scene;
 	int mScreenWidth;
 	int mScreenHeight;
