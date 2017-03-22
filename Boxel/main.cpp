@@ -1,7 +1,7 @@
 #include "Core/Error.hpp"
 #include "Core/Modules.hpp"
 
-#include "System.hpp"
+#include "Window.hpp"
 
 #include "PlatformIndependenceLayer/Timer.hpp"
 

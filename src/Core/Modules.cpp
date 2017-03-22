@@ -1,6 +1,6 @@
 #include "Modules.hpp"
 
-#include "System.hpp"
+#include "Window.hpp"
 #include "PlatformIndependenceLayer/GraphicsWrapper.hpp"
 #include "Renderer/Renderer.hpp"
 #include "Resources/Resources.hpp"

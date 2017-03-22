@@ -1,6 +1,6 @@
 #include "BoxelCamera.hpp"
 
-#include "../System.hpp"
+#include "../Window.hpp"
 
 BoxelCamera::BoxelCamera(){
   mRendererCamera = Renderer::createCamera();

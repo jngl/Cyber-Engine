@@ -1,6 +1,6 @@
 #include <glad/glad.h>
 
-#include "System.hpp"
+#include "Window.hpp"
 
 #include <string>
 #include <iostream>
@@ -28,7 +28,7 @@ namespace System
         }
         
         
-        // OpenGL 3.1
+        // OpenGL 3.3
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
         
