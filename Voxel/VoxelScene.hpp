@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Image.hpp"
-#include "Noise.hpp"
+#include "Core/Noise.hpp"
 #include "VoxelCamera.hpp"
 
 class VoxelScene

@@ -51,5 +51,5 @@ VoxelCamera& VoxelScene::getCameraRef(){
 }
 
 float VoxelScene::genHeight(math::Vector2f p){
-	return ( noise(p*MOUNTAIN_WIDTH, math::Vector2f{8.0f, 8.f}) * 0.25f + 0.75f*noise(p*MOUNTAIN_WIDTH, math::Vector2f{32.0f, 32.f}) )*MOUNTAIN_HEIGHT;	
+	return ( core::noise(p*MOUNTAIN_WIDTH, math::Vector2f{8.0f, 8.f}) * 0.25f + 0.75f*core::noise(p*MOUNTAIN_WIDTH, math::Vector2f{32.0f, 32.f}) )*MOUNTAIN_HEIGHT;	
 }
