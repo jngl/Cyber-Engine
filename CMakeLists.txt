@@ -42,6 +42,9 @@ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 #Boost
 find_package(Boost COMPONENTS system filesystem REQUIRED)
 
+#Bullet
+find_package(Bullet REQUIRED)
+include_directories(${BULLET_INCLUDE_DIRS})
 
 #Engine
 include_directories(src/)
@@ -77,4 +80,13 @@ file(GLOB_RECURSE Test_source_files test/*)
 add_executable(Test ${Test_source_files})
 TARGET_LINK_LIBRARIES(Test
             CyberEngine
+)
+
+#MyQuake 
+file(GLOB_RECURSE MyQuake_source_files MyQuake/*)
+add_executable(MyQuake ${MyQuake_source_files})
+TARGET_LINK_LIBRARIES(MyQuake 
+            ${SDL2_LIBRARY}  
+            ${OPENGL_LIBRARIES}
+            ${BULLET_LIBRARIES}
 )
