@@ -1,8 +1,8 @@
 cmake_minimum_required (VERSION 3.0)
-project (CyberEngine)
+project (MyGameEngine)
 
 # Use our modified FindSDL2* modules
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CyberEngine_SOURCE_DIR}/cmake")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${MyGameEngine_SOURCE_DIR}/cmake")
 
 #C++11
 include(CheckCXXCompilerFlag)
@@ -20,73 +20,22 @@ endif()
 find_package(SDL2 REQUIRED)
 include_directories(${SDL2_INCLUDE_DIR})
 
-#SDL2_Image
-find_package(SDL2_image REQUIRED)
-include_directories(${SDL2_IMAGE_INCLUDE_DIR})
-
 #OpenGL
 find_package(OpenGL REQUIRED)
 include_directories(${OpenGL_INCLUDE_DIRS})
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -DGL_GLEXT_PROTOTYPES")
+#ext
+include_directories("${MyGameEngine_SOURCE_DIR}/ext/include")
+file(GLOB_RECURSE ext_source_files ext/src/*)
 
-#GLM
-find_package(glm REQUIRED)
-include_directories(${GLM_INCLUDE_DIRS})
+#include
+include_directories("${MyGameEngine_SOURCE_DIR}/include")
 
-#OpenMP
-find_package(OpenMP REQUIRED)
-set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-
-#Boost
-find_package(Boost COMPONENTS system filesystem REQUIRED)
-
-#Bullet
-find_package(Bullet REQUIRED)
-include_directories(${BULLET_INCLUDE_DIRS})
-
-#Engine
-include_directories(src/)
-
-file(GLOB_RECURSE CyberEngine_source_files src/*)
-add_library(CyberEngine ${CyberEngine_source_files})
-TARGET_LINK_LIBRARIES(CyberEngine 
-            ${SDL2_LIBRARY}  
-            ${SDL2_IMAGE_LIBRARY}
+#GameEngine
+file(GLOB_RECURSE GE_source_files src/*)
+add_executable(GameEngine ${GE_source_files} ${ext_source_files})
+TARGET_LINK_LIBRARIES(GameEngine
+            ${SDL2_LIBRARY} 
             ${OPENGL_LIBRARIES}
-            ${GLEW_LIBRARIES}
             ${CMAKE_DL_LIBS}
-            ${Boost_FILESYSTEM_LIBRARY}
-			${Boost_SYSTEM_LIBRARY}
-)
-
-#Boxel
-file(GLOB_RECURSE Boxel_source_files Boxel/*)
-add_executable(Boxel ${Boxel_source_files})
-TARGET_LINK_LIBRARIES(Boxel
-            CyberEngine
-)
-
-#Voxel
-file(GLOB_RECURSE Voxel_source_files Voxel/*)
-add_executable(Voxel ${Voxel_source_files})
-TARGET_LINK_LIBRARIES(Voxel
-            CyberEngine
-)
-
-#Test 
-file(GLOB_RECURSE Test_source_files test/*)
-add_executable(Test ${Test_source_files})
-TARGET_LINK_LIBRARIES(Test
-            CyberEngine
-)
-
-#MyQuake 
-file(GLOB_RECURSE MyQuake_source_files MyQuake/*)
-add_executable(MyQuake ${MyQuake_source_files})
-TARGET_LINK_LIBRARIES(MyQuake 
-            ${SDL2_LIBRARY}  
-            ${OPENGL_LIBRARIES}
-            ${BULLET_LIBRARIES}
 )
