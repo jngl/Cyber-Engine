@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BoxelCamera.hpp"
+#include "BoxelPlayer.hpp"
 
 #include "../Scene.hpp"
 
@@ -50,7 +51,6 @@ public:
   ~BoxelScene();
 
   void addAction(Window &win) override;
-
   void update(float frameTime) override;
 
 private:
@@ -59,5 +59,6 @@ private:
   Renderer::Object mBlockObject;
   
   BoxelCamera mCamera;
+  BoxelPlayer mPlayer;
   //BoxelChunk<50, 50, 50> chunk;
 };

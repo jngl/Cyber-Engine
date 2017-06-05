@@ -275,7 +275,7 @@ BoxelScene::BoxelScene():
   for(std::size_t i(0); i<BoxelMap::mNbBlock; ++i){
     const BoxelMap::BlockType& type = mBoxelMap.getBlockType(i);
     if(type.visible){
-      std::string filename = "../data/"+type.name+".dds";
+      std::string filename = "./data/"+type.name+".dds";
       Renderer::Texture_handle tex = Renderer::createTexture(filename.c_str());
       mBlockMaterial[i] = Renderer::createMaterial(tex, type.name+"Material");
 
@@ -310,6 +310,7 @@ BoxelScene::~BoxelScene(){
 
 void BoxelScene::addAction(Window& win){
   mCamera.addAction(win);
+  mPlayer.addAction(win);
 }
   
 void BoxelScene::update(float frameTime){

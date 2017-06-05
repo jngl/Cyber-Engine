@@ -4,6 +4,9 @@ project (MyGameEngine)
 # Use our modified FindSDL2* modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${MyGameEngine_SOURCE_DIR}/cmake")
 
+#Output
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${MyGameEngine_SOURCE_DIR}/Game)
+
 #C++11
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)

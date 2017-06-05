@@ -319,6 +319,10 @@ namespace math {
       (*this) *= r;
     }
 
+    void addScale(T x, T y, T z){
+      addScale(Vector3<T>(x, y, z));
+    }
+
     void setRotation(float flAngle, const Vector3<T> &v) {
       setIdentity();
       float x = v.x;
