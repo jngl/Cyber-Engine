@@ -10,6 +10,7 @@
 
 #include <memory>
 #include <set>
+#include <vector>
 
 /********************************************************
  * Sprite Mesh Data

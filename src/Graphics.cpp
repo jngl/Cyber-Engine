@@ -1,6 +1,7 @@
 #include "Graphics.hpp" 
 
 #include "debugAssert.hpp"
+#include "filesystem.hpp"
 
 #include <cstring>
 
@@ -115,11 +116,13 @@ void glCheckError(const std::string& file, unsigned int line){
 
     unsigned char header[124];
 
+	std::string filename2 = filesystem::getBaseDirectory() + filesystem::getGameDirectory() + "\\" + filename;
+
     FILE *fp;
 
     /* essaie d'ouvrir le fichier */
-    fp = fopen(filename.c_str(), "rb");
-    debug::assert("Texture", fp != NULL, "error with dds file : \"", filename, "\"");
+	errno_t error = fopen_s(&fp, filename2.c_str(), "rb");
+    debug::assert("Texture", error == 0 && fp != NULL, "error with dds file : \"", filename2, "\"");
 
     /* vérifie le type du fichier */
     char filecode[4];
@@ -210,7 +213,7 @@ void glCheckError(const std::string& file, unsigned int line){
 ********************************************************/
 
 void Shader::load(const char *vertCode, const char *fragCode) {
-    GLuint p, v, f;
+    GLuint v, f;
 
     glCheck(v = glCreateShader(GL_VERTEX_SHADER));
     glCheck(f = glCreateShader(GL_FRAGMENT_SHADER));

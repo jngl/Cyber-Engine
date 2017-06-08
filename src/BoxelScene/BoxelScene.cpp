@@ -4,6 +4,8 @@
 
 #include "debugAssert.hpp"
 
+#include <vector>
+
 const BoxelMap::BlockType BoxelMap::mBlockType[BoxelMap::mNbBlock] =
   { {"grass", true, false},
     {"stone", true, false},
@@ -45,7 +47,7 @@ void BoxelMap::generate(){
   for(unsigned int z(0); z<mSizeZ; ++z){
     for(unsigned int y(0); y<mSizeY; ++y){
       for(unsigned int x(0); x<mSizeX; ++x){
-	float y2 = y;
+	float y2 = static_cast<float>(y);
 	float h = height[x][z];
 
 	mBlock[z][y][x] = mNothingId;
@@ -90,7 +92,7 @@ struct BoxelMesh{
   std::vector<unsigned int> faces;
   BoxelMap& boxelMap;
 
-  BoxelMesh(BoxelMap& m):boxelMap(m){}
+  BoxelMesh(BoxelMap& m) :boxelMap(m) { }
 
   void addVertex(float posX,
 		 float posY,
@@ -247,15 +249,16 @@ struct BoxelMesh{
   }
 
   void generate(BoxelMap::BlockId type){
-    for(unsigned int y(0); y<BoxelMap::mSizeY; ++y){
-      for(unsigned int z(0); z<BoxelMap::mSizeZ; ++z){
-	for(unsigned int x(0); x<BoxelMap::mSizeX; ++x){
-	  if(boxelMap.getBlock(x, y, z)==type){
-	    generateCube(x, y, z);
+	  for (unsigned int y(0); y < BoxelMap::mSizeY; ++y) {
+		  for (unsigned int z(0); z < BoxelMap::mSizeZ; ++z) {
+			  for (unsigned int x(0); x < BoxelMap::mSizeX; ++x) {
+				  if (boxelMap.getBlock(x, y, z) == type) {
+					  generateCube(x, y, z);
+				  }
+
+			  }
+		  }
 	  }
-	}
-      }
-    }
   }
 
 };
@@ -275,7 +278,7 @@ BoxelScene::BoxelScene():
   for(std::size_t i(0); i<BoxelMap::mNbBlock; ++i){
     const BoxelMap::BlockType& type = mBoxelMap.getBlockType(i);
     if(type.visible){
-      std::string filename = "./data/"+type.name+".dds";
+      std::string filename = type.name+".dds";
       Renderer::Texture_handle tex = Renderer::createTexture(filename.c_str());
       mBlockMaterial[i] = Renderer::createMaterial(tex, type.name+"Material");
 
@@ -286,15 +289,16 @@ BoxelScene::BoxelScene():
       BoxelMesh mesh(mBoxelMap);
       mesh.generate(i);
 
-      
-      Renderer::addSubMesh(mBlockObject.model,
-			   mesh.vertices.size()/3,
-			   &mesh.vertices[0],
-			   &mesh.texCoord[0],
-			   &mesh.normals[0],
-			   mesh.faces.size() / 3,
-			   &mesh.faces[0],
-			   mBlockMaterial[i]);
+	  if (mesh.vertices.size() != 0) {
+		  Renderer::addSubMesh(mBlockObject.model,
+			  mesh.vertices.size() / 3,
+			  &mesh.vertices[0],
+			  &mesh.texCoord[0],
+			  &mesh.normals[0],
+			  mesh.faces.size() / 3,
+			  &mesh.faces[0],
+			  mBlockMaterial[i]);
+	  }
     }
   }
   
