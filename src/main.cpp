@@ -9,6 +9,8 @@
 #include "BasicScene.hpp"
 #include "BoxelScene/BoxelScene.hpp"
 
+#include "filesystem.hpp"
+
 #include <imgui.h>
 
 #include <memory>
@@ -48,6 +50,8 @@ public:
   {
     Arg arg = parseArg(argc, argv);
 
+    filesystem::createFileSystem();
+
     mWindow.reset(new Window(arg.width, arg.height));
     mWindow->addAction(SDL_SCANCODE_F3, &mShowInfoWindow, false);
 
@@ -60,6 +64,7 @@ public:
   ~Application() {
     mScene = nullptr;
     Renderer::destroyRenderer();
+    filesystem::destroyFileSystem();
   }
 
   void run() {
