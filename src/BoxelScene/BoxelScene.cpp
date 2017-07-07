@@ -4,6 +4,8 @@
 
 #include "debugAssert.hpp"
 
+#include <vector>
+
 const BoxelMap::BlockType BoxelMap::mBlockType[BoxelMap::mNbBlock] =
   { {"grass", true, false},
     {"stone", true, false},

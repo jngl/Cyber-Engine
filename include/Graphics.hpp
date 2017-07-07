@@ -50,7 +50,7 @@ namespace Graphics {
 
 		void printShaderInfoLog(GLuint obj);
 		void printProgramInfoLog(GLuint obj);
-		char *getTypeName(GLenum type);
+		const char *getTypeName(GLenum type);
 	};
 	
 	class SubMesh

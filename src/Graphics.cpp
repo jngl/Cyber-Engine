@@ -358,8 +358,8 @@ void Shader::load(const char *vertCode, const char *fragCode) {
   }
 }
 
-char *Shader::getTypeName(GLenum type) {
-  char *result;
+const char *Shader::getTypeName(GLenum type) {
+  std::string result;
   switch (type) {
   case GL_FLOAT:
     result = "float";
@@ -383,7 +383,7 @@ char *Shader::getTypeName(GLenum type) {
     result = "unkown";
     break;
   }
-  return result;
+  return result.c_str();
 }
   
 /********************************************************
