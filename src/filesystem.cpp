@@ -14,6 +14,15 @@ namespace filesystem
     return "data";
   }
 
+  
+  std::string getPathSeparator(){
+#ifdef _WIN32
+    return "\\";
+#else
+    return "/";
+#endif
+  }
+
   // main
   void createFileSystem(){
     debug::log("FileSystem", "construct");

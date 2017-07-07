@@ -1,8 +1,10 @@
 #include "Graphics.hpp" 
 
 #include "debugAssert.hpp"
+#include "filesystem.hpp"
 
 #include <cstring>
+#include <cstdint>
 
 namespace Graphics {
 /********************************************************
@@ -106,6 +108,44 @@ void glCheckError(const std::string& file, unsigned int line){
 #define FOURCC_DXT3 0x33545844 // Equivalent to "DXT3" in ASCII
 #define FOURCC_DXT5 0x35545844 // Equivalent to "DXT5" in ASCII
 
+  union DDS_header {
+    struct {
+      //uint32_t dwMagic;
+      uint32_t dwSize;
+      uint32_t dwFlags;
+      uint32_t dwHeight;
+      uint32_t dwWidth;
+      uint32_t dwPitchOrLinearSize;
+      uint32_t dwDepth;
+      uint32_t dwMipMapCount;
+      uint32_t dwReserved1[ 11 ];
+      
+      //  DDPIXELFORMAT
+      struct {
+	uint32_t dwSize;
+        uint32_t dwFlags;
+        uint32_t dwFourCC;
+        uint32_t dwRGBBitCount;
+        uint32_t dwRBitMask;
+        uint32_t dwGBitMask;
+        uint32_t dwBBitMask;
+        uint32_t dwAlphaBitMask;
+      } sPixelFormat;
+      
+      //  DDCAPS2
+      struct {
+	uint32_t dwCaps1;
+        uint32_t dwCaps2;
+        uint32_t dwDDSX;
+        uint32_t dwReserved;
+      } sCaps;
+      
+      uint32_t dwReserved2;
+    };
+    char data[ 124 ];
+  };
+
+  
 	Texture::Texture() { glGenTextures(1, &mId); }
 
   Texture::~Texture() { glDeleteTextures(1, &mId); }
@@ -113,39 +153,42 @@ void glCheckError(const std::string& file, unsigned int line){
   void Texture::load(std::string filename) {
     mName = filename;
 
-    unsigned char header[124];
+    DDS_header header;
+    
+    std::string filename2 = filesystem::getBaseDirectory() +
+      filesystem::getGameDirectory() +
+      filesystem::getPathSeparator() +
+      filename;
 
-    FILE *fp;
-
-    /* essaie d'ouvrir le fichier */
-    fp = fopen(filename.c_str(), "rb");
-    debug::assert("Texture", fp != NULL, "error with dds file : \"", filename, "\"");
+    //open file
+    std::fstream file(filename2, std::fstream::in | std::fstream::binary);
+    debug::assert("Texture", file.is_open(), "error with dds file : \"", filename2, "\"");
 
     /* vérifie le type du fichier */
     char filecode[4];
-    fread(filecode, 1, 4, fp);
+    file.read(filecode, 4);
     if (strncmp(filecode, "DDS ", 4) != 0) {
-      fclose(fp);
+      file.close();
       debug::assert("Texture", false, "error in dds file");
     }
 
     /* récupère la description de la surface */
-    fread(&header, 124, 1, fp);
+    file.read(header.data, sizeof(DDS_header));
 
-    unsigned int height = *(unsigned int *)&(header[8]);
-    unsigned int width = *(unsigned int *)&(header[12]);
-    unsigned int linearSize = *(unsigned int *)&(header[16]);
-    unsigned int mipMapCount = *(unsigned int *)&(header[24]);
-    unsigned int fourCC = *(unsigned int *)&(header[80]);
+    unsigned int height = header.dwHeight;
+    unsigned int width =  header.dwWidth;
+    unsigned int linearSize = header.dwPitchOrLinearSize;
+    unsigned int mipMapCount = header.dwMipMapCount;
+    unsigned int fourCC = header.sPixelFormat.dwFourCC;
 
-    unsigned char *buffer;
+    char *buffer;
     unsigned int bufsize;
     /* quelle va être la taille des données incluant les MIP maps ? */
     bufsize = mipMapCount > 1 ? linearSize * 2 : linearSize;
-    buffer = (unsigned char *)malloc(bufsize * sizeof(unsigned char));
-    fread(buffer, 1, bufsize, fp);
+    buffer = (char *)malloc(bufsize * sizeof(unsigned char));
+    file.read(buffer, bufsize);
     /* fermer le pointeur de fichier */
-    fclose(fp);
+    file.close();
 
     unsigned int components = (fourCC == FOURCC_DXT1) ? 3 : 4;
     unsigned int format;
@@ -210,7 +253,7 @@ void glCheckError(const std::string& file, unsigned int line){
 ********************************************************/
 
 void Shader::load(const char *vertCode, const char *fragCode) {
-    GLuint p, v, f;
+    GLuint v, f;
 
     glCheck(v = glCreateShader(GL_VERTEX_SHADER));
     glCheck(f = glCreateShader(GL_FRAGMENT_SHADER));

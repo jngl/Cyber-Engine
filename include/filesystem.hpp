@@ -6,6 +6,7 @@
 namespace filesystem {
   std::string getBaseDirectory();
   std::string getGameDirectory();
+  std::string getPathSeparator();
 
   // main
   void createFileSystem();

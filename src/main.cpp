@@ -22,7 +22,7 @@ struct Arg {
 };
 
 Arg parseArg(int argc, char *argv[]) {
-  cmdline::parser a;
+ /* cmdline::parser a;
   
   a.add<int>("width", 'w', "width of the window", false, 1024,
              cmdline::range(1, 65535));
@@ -32,11 +32,15 @@ Arg parseArg(int argc, char *argv[]) {
                      cmdline::oneof<std::string>("Boxel", "Basic"));
 
   a.parse_check(argc, argv);
-
+  */
   Arg arg;
-  arg.width = a.get<int>("width");
+ /* arg.width = a.get<int>("width");
   arg.height = a.get<int>("height");
-  arg.sceneName = a.get<std::string>("scene");
+  arg.sceneName = a.get<std::string>("scene");*/
+
+  arg.width = 1024;
+  arg.height = 768;
+  arg.sceneName= "Boxel";
 
   return arg;
 }
@@ -156,9 +160,18 @@ private:
 };
 
 int main(int argc, char *argv[]) {
-  Application app(argc, argv);
-  debug::log("Main", "begin main loop");
-  app.run();
-  debug::log("Main", "end main loop");
+	try
+	{
+		Application app(argc, argv);
+		debug::log("Main", "begin main loop");
+		app.run();
+		debug::log("Main", "end main loop");
+	}
+	catch (std::exception e) {
+		std::cerr << e.what() << std::endl;
+	}
+	catch (...) {
+		std::cerr << "unkonw error" << std::endl;
+	}
   return 0;
 }

@@ -4,6 +4,10 @@
 #include <cmath>
 #include <cstring>
 
+#ifndef M_PI
+#define M_PI 3.14159265359
+#endif
+
 namespace math {
   template <class T> T mix(T x, T y, T a) { return x * (1 - a) + y * a; }
 
@@ -19,6 +23,7 @@ namespace math {
   using std::floor;
   using std::cos;
   using std::sin;
+  using std::tan;
   using std::max;
   using std::min;
   using std::abs;
@@ -201,7 +206,7 @@ namespace math {
 
     Vector3<T> getSign() { return Vector3<T>{sign(x), sign(y), sign(z)}; }
 
-    static Vector3<T> max(Vector3<T> a, Vector3<T> b) {
+  /*  static Vector3<T> max(Vector3<T> a, Vector3<T> b) {
       return Vector3<T>{a.x > b.x ? a.x : b.x, a.y > b.y ? a.y : b.y,
 	  a.z > b.z ? a.z : b.z};
     }
@@ -209,7 +214,7 @@ namespace math {
     static Vector3<T> mix(Vector3<T> a, Vector3<T> b, T v) {
       return Vector3<T>{math::mix(a.x, b.x, v), math::mix(a.y, b.y, v),
 	  math::mix(a.z, b.z, v)};
-    }
+    }*/
   };
 
   typedef Vector3<float> Vector3f;
@@ -254,12 +259,12 @@ namespace math {
     }
 
     void projectOrthographic(float left, float right, float bottom, float top,
-			     float near, float far) {
+			     float pNear, float pFar) {
       setIdentity();
 
       float XD = right - left;
       float YD = top - bottom;
-      float ZD = far - near;
+      float ZD = pFar - pNear;
 
       m[0][0] = 2.0f / XD;
       m[1][1] = 2.0f / YD;
@@ -267,21 +272,21 @@ namespace math {
 
       m[3][0] = -(right + left) / XD;
       m[3][1] = -(top + bottom) / YD;
-      m[3][2] = -(far + near) / ZD;
+      m[3][2] = -(pFar + pNear) / ZD;
     }
 
-    void projectPerspective(float FOV, float aspectRatio, float near, float far) {
-      float tanThetaOver2 = tan(FOV * (M_PI / 360.0));
+    void projectPerspective(float pFOV, float pAspectRatio, float pNear, float pFar) {
+      float tanThetaOver2 = static_cast<float>(tan(pFOV * (M_PI / 360.0)));
       setIdentity();
 
       // X and Y scaling
       m[0][0] = 1 / tanThetaOver2;
-      m[1][1] = aspectRatio / tanThetaOver2;
+      m[1][1] = pAspectRatio / tanThetaOver2;
 
       // Z coordinate makes z -1 when we're on the near plane and +1 on the far
       // plane
-      m[2][2] = (near + far) / (near - far);
-      m[3][2] = 2 * near * far / (near - far);
+      m[2][2] = (pNear + pFar) / (pNear - pFar);
+      m[3][2] = 2 * pNear * pFar / (pNear - pFar);
 
       // W = -1 so that we have [x y z -z], a homogenous vector that becomes [-x/z
       // -y/z -1] after division by w.
