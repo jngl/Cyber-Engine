@@ -12,7 +12,6 @@
 /**********************************************
  * Include
  *********************************************/
-#define CYBER_ENGINE_IMPL
 #include "CyberEngine.hpp"
 
 #include <random>

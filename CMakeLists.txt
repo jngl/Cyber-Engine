@@ -29,11 +29,16 @@ include_directories(${OpenGL_INCLUDE_DIRS})
 
 #CyberEngine
 include_directories(${CyberEngine_SOURCE_DIR}/include)
+file(GLOB_RECURSE CyberEngine_source_files src/*)
+add_library(CyberEngine STATIC ${CyberEngine_source_files})
+TARGET_LINK_LIBRARIES(CyberEngine
+            ${SDL2_LIBRARIES} 
+            ${OPENGL_LIBRARIES}
+)
 
 #Tetris
 file(GLOB_RECURSE tetris_source_files Tetris/*)
 add_executable(Tetris ${tetris_source_files})
 TARGET_LINK_LIBRARIES(Tetris
-            ${SDL2_LIBRARIES} 
-            ${OPENGL_LIBRARIES}
+            CyberEngine
 )
