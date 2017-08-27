@@ -109,7 +109,7 @@ namespace cy
       glLoadIdentity( );
 
       
-      frame(*mRenderer);
+      frame(*mRenderer, width, height);
       
       SDL_GL_SwapWindow(mWindow);
     }
@@ -244,29 +244,29 @@ namespace cy
     glClear(GL_COLOR_BUFFER_BIT);
   }
   
-  void Renderer::rect(int x, int y, int w, int h, float u, float v){
+  void Renderer::rect(float x, float y, float w, float h, float u, float v){
     //fill
     glBegin(GL_QUADS);
     glColor4ub(mFillColor.r, mFillColor.g, mFillColor.b, mFillColor.a);
     
     glTexCoord2f(0, v);
-    glVertex2i(x, y);
+    glVertex2f(x, y);
     glTexCoord2f(0, 0);
-    glVertex2i(x, y+h);
+    glVertex2f(x, y+h);
     glTexCoord2f(u, 0);
-    glVertex2i(x+w, y+h);
+    glVertex2f(x+w, y+h);
     glTexCoord2f(u, v);
-    glVertex2i(x+w, y);
+    glVertex2f(x+w, y);
     glEnd();
       
     //stroke
     glColor4ub(mStrokeColor.r, mStrokeColor.g, mStrokeColor.b, mStrokeColor.a);
     
     glBegin(GL_LINE_LOOP);
-    glVertex2i(x, y);
-    glVertex2i(x, y+h);
-    glVertex2i(x+w, y+h);
-    glVertex2i(x+w, y);
+    glVertex2f(x, y);
+    glVertex2f(x, y+h);
+    glVertex2f(x+w, y+h);
+    glVertex2f(x+w, y);
     glEnd();
     
     mustBeTrue(glGetError()==GL_NO_ERROR, "Renderer::Rect : opengl error");
