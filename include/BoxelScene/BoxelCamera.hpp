@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Math.hpp"
+#include <CyberBase.hpp>
 
 #include "../Renderer.hpp"
 
@@ -19,8 +19,8 @@ private:
   Renderer::Camera_handle mRendererCamera;
 
   float mDist;
-  math::Vector3f mPosition;
-  math::Vector2f mAngle;
+  cb::Vector3f mPosition;
+  cb::Vector2f mAngle;
   
   bool mActionRotateUp, mActionRotateDown, mActionRotateLeft, mActionRotateRight, mActionMoveForward, mActionMoveBackward;
 };

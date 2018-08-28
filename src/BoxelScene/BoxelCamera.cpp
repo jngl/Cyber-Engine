@@ -29,7 +29,7 @@ void BoxelCamera::update(float frameTime){
     const float moveSpeed = frameTime*15.f;
     const float rotateSpeed = frameTime*1.56f;
 
-    math::Vector3f moveVec(cos(mAngle.x)*cos(mAngle.y), sin(mAngle.x), cos(mAngle.x)*sin(mAngle.y));
+    cb::Vector3f moveVec(cos(mAngle.x)*cos(mAngle.y), sin(mAngle.x), cos(mAngle.x)*sin(mAngle.y));
     
     if(mActionMoveForward){
       mPosition += moveVec*moveSpeed;
@@ -45,7 +45,7 @@ void BoxelCamera::update(float frameTime){
       mAngle.x -= rotateSpeed;
     }
     
-    math::Matrix4f viewMatrix;
+    cb::Matrix4f viewMatrix;
 
     viewMatrix.lookAt(mPosition, mPosition+moveVec, {0.f, 1.0f, 0.f});
     

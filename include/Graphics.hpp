@@ -1,7 +1,7 @@
 #pragma once 
 
 #include "glad/glad.h"
-#include "Math.hpp"
+#include <CyberBase.hpp>
 
 #include <string>
 
@@ -35,7 +35,7 @@ namespace Graphics {
 		void load(const char *vertCode, const char *fragCode);
 
 		Location addMatrixInput(std::string name);
-		void setMatrixInput(Location loc, math::Matrix4f mat);
+		void setMatrixInput(Location loc, cb::Matrix4f mat);
 
 		Location addTextureInput(std::string name);
 
