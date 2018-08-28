@@ -1,6 +1,5 @@
 #include "Graphics.hpp" 
 
-#include "debugAssert.hpp"
 #include "filesystem.hpp"
 
 #include <cstring>
@@ -80,9 +79,7 @@ void glCheckError(const std::string& file, unsigned int line){
             }
         }
 
-        //std::cout<<"Warning OpenGL in \""<<file<<"\" (l"<<line<<") : "<<error<<" ; "<<description<<std::endl;
-
-        debug::assert("glCheck", false, "An internal OpenGL call failed in ", file, " ( ", line, " ) : ", error, ", ", description);
+        CB_ERROR<<"openGL shader error in \""<<file<<"\" (l"<<line<<") : "<<error<<" ; "<<description;
     }
 }
 	
@@ -162,14 +159,16 @@ void glCheckError(const std::string& file, unsigned int line){
 
     //open file
     std::fstream file(filename2, std::fstream::in | std::fstream::binary);
-    debug::assert("Texture", file.is_open(), "error with dds file : \"", filename2, "\"");
+    if(!file.is_open()){
+      CB_ERROR<<"error with dds file : \""<< filename2<< "\"";
+    }
 
     /* vérifie le type du fichier */
     char filecode[4];
     file.read(filecode, 4);
     if (strncmp(filecode, "DDS ", 4) != 0) {
       file.close();
-      debug::assert("Texture", false, "error in dds file");
+      CB_ERROR<<"error in dds file";
     }
 
     /* récupère la description de la surface */
@@ -204,7 +203,7 @@ void glCheckError(const std::string& file, unsigned int line){
       break;
     default:
       free(buffer);
-      debug::assert("Texture", false, "unsupported dds format");
+      CB_ERROR<<"unsupported dds format";
     }
 
     // Crée une texture OpenGL
@@ -234,7 +233,9 @@ void glCheckError(const std::string& file, unsigned int line){
     }
     free(buffer);
 
-    debug::assert("Texture", mId != 0, "error with a texture");
+    if( mId == 0){
+      CB_ERROR<<"error with a texture";
+    }
   }
 
   unsigned int Texture::getId() { return mId; }
@@ -293,7 +294,9 @@ void Shader::load(const char *vertCode, const char *fragCode) {
   Shader::Location Shader::addTextureInput(std::string name) {
     Shader::Location loc;
     glCheck(loc = glGetUniformLocation(shaderProgram, name.c_str()));
-    debug::assert("Shader", loc > 0, "no texture input");
+    if(loc <= 0){
+      CB_ERROR<<"no texture input";
+    }
     return loc;
   }
 
@@ -451,7 +454,6 @@ const char *Shader::getTypeName(GLenum type) {
 		mWithIndex = false;
 		mPrimitives = primitives;
 		mCount = count;
-		debug::log("SubMesh", "\tend");
 	}
 	
 	void SubMesh::endLoadWithIndex(Primitives primitives, unsigned int count, const unsigned int* data){

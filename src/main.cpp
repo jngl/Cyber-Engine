@@ -2,7 +2,6 @@
 
 #include "Timer.hpp"
 #include "cmdline.h"
-#include "debugAssert.hpp"
 
 #include "Renderer.hpp"
 
@@ -14,6 +13,8 @@
 #include <imgui.h>
 
 #include <memory>
+
+#include <CyberBase.hpp>
 
 struct Arg {
   int width;
@@ -142,7 +143,7 @@ private:
   }
 
   void runCommand(){
-    debug::log("Main", "run command : ", mCommandText);
+    CB_LOG_INFO<<"run command : "<< mCommandText;
 
     std::string command = mCommandText;
     memset(mCommandText, 0, mMaxInputSize);
@@ -160,18 +161,10 @@ private:
 };
 
 int main(int argc, char *argv[]) {
-	try
-	{
-		Application app(argc, argv);
-		debug::log("Main", "begin main loop");
-		app.run();
-		debug::log("Main", "end main loop");
-	}
-	catch (std::exception e) {
-		std::cerr << e.what() << std::endl;
-	}
-	catch (...) {
-		std::cerr << "unkonw error" << std::endl;
-	}
+  cb::addDefaultLogOutput();
+  Application app(argc, argv);
+  CB_LOG_INFO<<"begin main loop";
+  app.run();
+  CB_LOG_INFO<<"end main loop";
   return 0;
 }

@@ -1,6 +1,6 @@
 #include "filesystem.hpp"
 
-#include "debugAssert.hpp"
+#include <CyberBase.hpp>
 
 #include <SDL.h>
 
@@ -25,12 +25,12 @@ namespace filesystem
 
   // main
   void createFileSystem(){
-    debug::log("FileSystem", "construct");
-    debug::log("Filesystem", "Data Directory : \"", getBaseDirectory(), getGameDirectory(), "\"");
+    CB_LOG_INFO<<"FileSystem construct";
+    CB_LOG_INFO<<"Data Directory : \"" << getBaseDirectory() << getGameDirectory() << "\"";
   }
   
   void destroyFileSystem(){
-    debug::log("FileSystem", "destruct");
+    CB_LOG_INFO<<"FileSystem destruct";
   }
 
 }

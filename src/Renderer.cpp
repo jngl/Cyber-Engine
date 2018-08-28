@@ -6,8 +6,6 @@
 
 #include "PoolAllocator.hpp"
 
-#include "debugAssert.hpp"
-
 #include <memory>
 #include <set>
 #include <vector>
@@ -163,7 +161,7 @@ namespace Renderer {
 ********************************************************/
 
   void createRenderer() {
-    debug::log("Renderer", "construct");
+    CB_LOG_INFO<<"Renderer construct";
 
     Graphics::createGraphics();
 
@@ -198,8 +196,8 @@ namespace Renderer {
   }
 
   void destroyRenderer() {
-	  debug::log("Renderer", "destruct"); 
-	  Graphics::destroyGraphics();
+    CB_LOG_INFO<<"Renderer destruct";
+    Graphics::destroyGraphics();
   }
 
   void resize(int width, int height) {
@@ -212,7 +210,7 @@ namespace Renderer {
   core::PoolAllocator<Material, 100> MaterialPool;
 
   Material_handle createMaterial(Texture_handle tex, std::string name) {
-    debug::log("Renderer", "create materia \"", name, "\"");
+    CB_LOG_INFO<<"create materia \""<< name<< "\"";
     Material_handle result = MaterialPool.create();
     result->texture = tex;
     result->withAlpha = false;
@@ -231,7 +229,7 @@ namespace Renderer {
   core::PoolAllocator<Model, 100> ModelPool;
 
   Model_handle createModel(std::string nom){
-    debug::log("Renderer", "create model \"", nom, "\"");
+    CB_LOG_INFO<<"create model \"" << nom << "\"";
     Model_handle result = ModelPool.create();
     result->nom = nom;
     return result;
@@ -274,7 +272,7 @@ namespace Renderer {
   }
 
   void destoryModel(Model_handle handle) {
-    debug::log("Renderer", "destroy model \"", handle->nom, "\"");
+    CB_LOG_INFO<<"destroy model \"" << handle->nom << "\"";
     for(std::size_t i(0); i<handle->subMeshs.size(); ++i){
       handle->subMeshs[i].unload();
     }
@@ -320,12 +318,12 @@ namespace Renderer {
     model(nullptr),
     name(objectName)
   {
-    debug::log("Renderer", "create object \"", name, "\"");
+    CB_LOG_INFO<<"create object \"" << name << "\"";
     objectArray.insert(this);
   }
 
   Object::~Object(){
-    debug::log("Renderer", "destory object");
+    CB_LOG_INFO<<"destory object";
     objectArray.erase(this);
   }
   
@@ -337,7 +335,7 @@ namespace Renderer {
   //core::PoolAllocator<Graphics::Texture, 100> TexturePool;  
 
   Texture_handle createTexture(const char *filename) {
-    debug::log("Renderer", "create texture \"", filename, "\"");
+    CB_LOG_INFO<<"create texture \"" << filename << "\"";
 
     for(Texture_handle texture : textures){
       if(texture->getName()==filename){
@@ -359,7 +357,7 @@ namespace Renderer {
  * Camera
 ********************************************************/
   Camera_handle createCamera() {
-    debug::log("Renderer", "create camera");
+    CB_LOG_INFO<<"create camera";
     Camera_handle result = new Camera;
     result->perspective = true;
     cameraArray.insert(result);
@@ -388,7 +386,7 @@ namespace Renderer {
   core::PoolAllocator<Sprite, 1000> SpritePool;
 
   Sprite_handle createSprite(Texture_handle handle) {
-    debug::log("Renderer", "create sprite");
+    CB_LOG_INFO<<"create sprite";
     Sprite_handle result = SpritePool.create();
     result->mMatrix.setIdentity();
     result->mTexture = handle;
