@@ -1,8 +1,7 @@
 cmake_minimum_required (VERSION 3.0)
 project (MyGameEngine)
 
-# Use our modified FindSDL2* modules
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${MyGameEngine_SOURCE_DIR}/cmake")
+include(FindPkgConfig)
 
 #Output
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${MyGameEngine_SOURCE_DIR}/Game)
@@ -14,8 +13,9 @@ set(CMAKE_CXX_STANDARD 17)
 add_subdirectory("ext/CyberBase")
 
 #SDL2
+pkg_search_module(SDL2 REQUIRED sdl2)
 find_package(SDL2 REQUIRED)
-include_directories(${SDL2_INCLUDE_DIR})
+include_directories(${SDL2_INCLUDE_DIRS})
 
 #OpenGL
 find_package(OpenGL REQUIRED)
@@ -32,7 +32,7 @@ include_directories("${MyGameEngine_SOURCE_DIR}/include")
 file(GLOB_RECURSE GE_source_files src/*)
 add_executable(GameEngine ${GE_source_files} ${ext_source_files})
 TARGET_LINK_LIBRARIES(GameEngine
-            ${SDL2_LIBRARY} 
+            ${SDL2_LIBRARIES} 
             ${OPENGL_LIBRARIES}
             ${CMAKE_DL_LIBS}
             CyberBase
