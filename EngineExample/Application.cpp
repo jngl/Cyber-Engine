@@ -11,8 +11,6 @@ Application::Application(int argc, char *argv[]):
 {
     Arg arg(argc, argv);
 
-    filesystem::createFileSystem();
-
     mWindow.reset(new Window(arg.width, arg.height));
     mWindow->addAction(SDL_SCANCODE_F3, &mShowInfoWindow, false);
 
@@ -25,7 +23,6 @@ Application::Application(int argc, char *argv[]):
 Application::~Application(){
     mScene = nullptr;
     Renderer::destroyRenderer();
-    filesystem::destroyFileSystem();
 }
 
 void Application::run(){

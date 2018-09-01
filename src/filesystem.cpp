@@ -4,33 +4,22 @@
 
 #include <SDL.h>
 
-namespace filesystem
+namespace ce
 {
-  std::string getBaseDirectory(){
-    return SDL_GetBasePath();
-  }
+    std::string getBaseDirectory(){
+        return SDL_GetBasePath();
+    }
   
-  std::string getGameDirectory(){
-    return "data";
-  }
+    std::string getGameDirectory(){
+        return "data";
+    }
 
   
-  std::string getPathSeparator(){
+    std::string getPathSeparator(){
 #ifdef _WIN32
-    return "\\";
+        return "\\";
 #else
-    return "/";
+        return "/";
 #endif
-  }
-
-  // main
-  void createFileSystem(){
-    CB_LOG_INFO<<"FileSystem construct";
-    CB_LOG_INFO<<"Data Directory : \"" << getBaseDirectory() << getGameDirectory() << "\"";
-  }
-  
-  void destroyFileSystem(){
-    CB_LOG_INFO<<"FileSystem destruct";
-  }
-
+    }
 }

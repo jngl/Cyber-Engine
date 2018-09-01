@@ -152,9 +152,9 @@ void glCheckError(const std::string& file, unsigned int line){
 
     DDS_header header;
     
-    std::string filename2 = filesystem::getBaseDirectory() +
-      filesystem::getGameDirectory() +
-      filesystem::getPathSeparator() +
+    std::string filename2 = ce::getBaseDirectory() +
+      ce::getGameDirectory() +
+      ce::getPathSeparator() +
       filename;
 
     //open file
