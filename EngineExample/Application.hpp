@@ -3,8 +3,8 @@
 #include <string>
 #include <memory>
 
-#include "Timer.hpp"
-#include "Window.hpp"
+#include <CyberEngine.hpp>
+
 #include "BasicScene.hpp"
 
 #include "Arg.hpp"

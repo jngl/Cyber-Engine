@@ -1,4 +1,4 @@
-#include "BoxelScene/BoxelScene.hpp"
+#include "BoxelScene.hpp"
 
 #include "stb_perlin.h"
 

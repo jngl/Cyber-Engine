@@ -3,7 +3,7 @@
 #include "BoxelCamera.hpp"
 #include "BoxelPlayer.hpp"
 
-#include "../Scene.hpp"
+#include <CyberEngine.hpp>
 
 class BoxelMap
 {

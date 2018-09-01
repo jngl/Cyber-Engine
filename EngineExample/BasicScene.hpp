@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Scene.hpp"
+#include "CyberEngine/Scene.hpp"
 
 class BasicScene : public Scene
 {

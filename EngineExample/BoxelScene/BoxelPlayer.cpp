@@ -1,5 +1,6 @@
-#include "BoxelScene/BoxelPlayer.hpp"
-#include "CubeData.hpp"
+#include "BoxelPlayer.hpp"
+
+#include "../CubeData.hpp"
 
 BoxelPlayer::BoxelPlayer():
   mObject("PlayerObject")

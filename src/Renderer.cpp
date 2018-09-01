@@ -2,9 +2,9 @@
  * Includes
 ********************************************************/
 
-#include "Renderer.hpp"
+#include "CyberEngine/Renderer.hpp"
 
-#include "PoolAllocator.hpp"
+#include "CyberEngine/PoolAllocator.hpp"
 
 #include <memory>
 #include <set>

@@ -1,7 +1,6 @@
 #pragma once
 
-#include "Renderer.hpp"
-#include "Window.hpp"
+#include <CyberEngine.hpp>
 
 class BoxelPlayer
 {

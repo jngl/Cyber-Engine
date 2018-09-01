@@ -1,10 +1,7 @@
 #pragma once
 
 #include <CyberBase.hpp>
-
-#include "../Renderer.hpp"
-
-#include "../Window.hpp"
+#include <CyberEngine.hpp>
 
 class BoxelCamera
 {
