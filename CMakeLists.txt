@@ -12,20 +12,27 @@ add_subdirectory("ext/CyberBase")
 pkg_search_module(SDL2 REQUIRED sdl2)
 find_package(OpenGL REQUIRED)
 
-#GameEngine
+#CyberEngine
 file(GLOB_RECURSE GE_source_files src/*)
 file(GLOB_RECURSE ext_source_files ext/src/*)
 
-add_executable(GameEngine ${GE_source_files} ${ext_source_files})
-TARGET_LINK_LIBRARIES(GameEngine
+add_library(CyberEngine ${GE_source_files} ${ext_source_files})
+TARGET_LINK_LIBRARIES(CyberEngine
             ${SDL2_LIBRARIES} 
             ${OPENGL_LIBRARIES}
             ${CMAKE_DL_LIBS}
             CyberBase
 )
-target_include_directories(GameEngine PUBLIC 
+target_include_directories(CyberEngine PUBLIC 
             "${CyberEngine_SOURCE_DIR}/include"
             "${CyberEngine_SOURCE_DIR}/ext/include"
             ${SDL2_INCLUDE_DIRS}
             ${OpenGL_INCLUDE_DIRS}
 )
+
+#Example
+file(GLOB_RECURSE EnigneExample_source_file EngineExample/*)
+add_executable(EngineExample ${EnigneExample_source_file})
+target_link_libraries(EngineExample PUBLIC
+            CyberEngine
+)           
