@@ -14,7 +14,6 @@ add_subdirectory("ext/CyberBase")
 
 #SDL2
 pkg_search_module(SDL2 REQUIRED sdl2)
-find_package(SDL2 REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS})
 
 #OpenGL
