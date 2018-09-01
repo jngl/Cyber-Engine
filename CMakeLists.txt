@@ -1,8 +1,8 @@
 cmake_minimum_required (VERSION 3.0)
-project (MyGameEngine)
+project (CyberEngine)
 
 include(FindPkgConfig)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${MyGameEngine_SOURCE_DIR}/Game)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CyberEngine_SOURCE_DIR}/Game)
 set(CMAKE_CXX_STANDARD 17)
 
 #CyberBase
@@ -24,8 +24,8 @@ TARGET_LINK_LIBRARIES(GameEngine
             CyberBase
 )
 target_include_directories(GameEngine PUBLIC 
-            "${MyGameEngine_SOURCE_DIR}/include"
-            "${MyGameEngine_SOURCE_DIR}/ext/include"
+            "${CyberEngine_SOURCE_DIR}/include"
+            "${CyberEngine_SOURCE_DIR}/ext/include"
             ${SDL2_INCLUDE_DIRS}
             ${OpenGL_INCLUDE_DIRS}
 )
