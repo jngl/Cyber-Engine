@@ -1,7 +1,7 @@
 #include "Window.hpp"
 
 #include "Timer.hpp"
-#include "cmdline.h"
+
 
 #include "Renderer.hpp"
 
@@ -16,33 +16,7 @@
 
 #include <CyberBase.hpp>
 
-struct Arg {
-  int width;
-  int height;
-  std::string sceneName;
-};
-
-Arg parseArg(int argc, char *argv[]) {
-  cmdline::parser a;
-  
-  a.add<int>("width", 'w', "width of the window", false, 1024,
-             cmdline::range(1, 65535));
-  a.add<int>("height", 'h', "height of the window", false, 768,
-             cmdline::range(1, 65535));
-  a.add<std::string>("scene", 's', "the scene to run", false, "Boxel",
-                     cmdline::oneof<std::string>("Boxel", "Basic"));
-
-  a.parse_check(argc, argv);
-  
-  Arg arg;
-  arg.width = a.get<int>("width");
-  arg.height = a.get<int>("height");
-  arg.sceneName = a.get<std::string>("scene");
-
-  CB_LOG_INFO<<"Width="<<arg.width<<" ; Height="<<arg.height<<" ; scene="<<arg.sceneName;
-
-  return arg;
-}
+#include "Arg.hpp"
 
 class Application {
 public:
@@ -51,7 +25,7 @@ public:
       mShowInfoWindow(false),
       mCommandText("")
   {
-    Arg arg = parseArg(argc, argv);
+    Arg arg(argc, argv);
 
     filesystem::createFileSystem();
 
